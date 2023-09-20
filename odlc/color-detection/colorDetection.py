@@ -10,8 +10,8 @@ import colorDetectionHelper as colorDetect
 stdCropColorRatio = 40 / 125
 
 # init images
-folder_path = '/Users/mightymanh/Desktop/myCode/temporary_2023/simulate-images/snapshots/target_practice'
-imgName_list = ['img_001_tar_001.jpg']
+folder_path = ''
+imgName_list = ['img_020_tar_001.jpg']
 
 for imgName in imgName_list:
     print(f"--------------------------\n{imgName}")

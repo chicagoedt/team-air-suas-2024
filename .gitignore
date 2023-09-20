@@ -11,7 +11,7 @@ __pycache__/
 .idea/
 
 # files
-odlc/color-detection/cropImages/*
+# odlc/color-detection/cropImages/*
 simulate-images/snapshots/
 simulate-images/target_images/*
 simulate-images/final_images/*

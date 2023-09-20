@@ -22,7 +22,7 @@
 
     , say 1. Then you are done now, the simulated images are generated. You can find the simulated images in
 
-    ==/simulate-images/snapshots/target/==
+    /simulate-images/snapshots/target/
 
 
     ![image](https://github.com/chicagoedt/team-air-suas-2024/assets/92337557/e8adf1c5-582b-439b-a201-470d1febf015)
@@ -31,4 +31,4 @@
 
     about the target in each generated image. In the folder target there are not only images but also a bunch of file with
 
-    extension YOLO. These files can be helpful for training YOLO model
+    extension YOLO. These files can be helpful for training YOLO model in case we intend to use it.

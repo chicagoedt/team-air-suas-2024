@@ -9,7 +9,7 @@ install these libraries: opencv-python, numpy
 
 **2. Where to begin**
 
-  There are **two main files** in here: colorDetection.py, targetLocate.py
+  **Main file**: colorDetection.py
 
   You can start with colorDetection.py which detects the shape color and letter color of a target.
 

@@ -14,8 +14,8 @@ stdMinRatioBtwNumPixelInsideContourAndAreaContour = 0.5
 stdImgTargetRatio = 10 / 6 # the ratio the size of crop target image and the size of target
 
 # input images and folder
-folderPath = '/Users/mightymanh/Desktop/myCode/temporary_2023/simulate-images/snapshots/target'
-imgName_list = ['img_008_tar_000.jpg']
+folderPath = ''
+imgName_list = ['img_023_tar_000.jpg']
 destFolderForCrop = 'cropImages'
 
 # for each image get centerCoords, Area of target, Shape color, width * height of target

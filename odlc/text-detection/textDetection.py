@@ -15,8 +15,8 @@ step = 10
 
 # init images
 reader = easyocr.Reader(['en'])
-folderPath = '/Users/mightymanh/Desktop' # put the repo path of image
-imgName_list = ['images (1).png'] # put the name of img here
+folderPath = '' # put the repo path of image
+imgName_list = ['img_024_tar_001.jpg'] # put the name of img here
 
 for imgName in imgName_list:
     print(f"------------------------------------\n{imgName}")

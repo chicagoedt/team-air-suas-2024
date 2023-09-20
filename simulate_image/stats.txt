@@ -1,0 +1,12 @@
+Time to create empty runway images: 3.67 seconds
+Runway image filesize: ~300 kb (0.3mb)
+30 runway images size: 9.7mb
+
+Time to create 600 target images: 55.07 seconds
+Target image filesize: ~300 kb (0.3mb)
+Target yolo filesize: ~30 bytes
+600 target images size: ~200mb (0.2gb)
+
+Calculations:
+Time for 3000 target images: 5 minutes
+Space required for 3000 images: 1gb

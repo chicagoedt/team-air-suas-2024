@@ -11,6 +11,7 @@ Team Members:
 - Gregg
 - Aiden
 - Ethan
+- AJ
 
 
 **Where to start**

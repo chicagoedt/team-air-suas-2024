@@ -6,6 +6,9 @@ Meeting minutes: Wednesday 6pm, Friday 4pm (optional), Saturday 2pm
 
 Captains: Manh Phan & Advik Sikligar
 
+Team Members:
+- Name
+
 **Where to start**
 
 Each folder has a README file that contains instruction on what to setup and where to start.

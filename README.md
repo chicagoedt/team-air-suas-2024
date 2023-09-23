@@ -10,6 +10,7 @@ Team Members:
 - Ivan
 - Davin
 - Gregg
+- Aiden
 
 **Where to start**
 

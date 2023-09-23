@@ -11,6 +11,8 @@ Team Members:
 - Davin
 - Gregg
 - Aiden
+- Ethan
+- Shaan Mehta
 
 **Where to start**
 
@@ -20,9 +22,3 @@ For anyone just start looking at this project, maybe a good starting point is cl
 which generates simulated images like this
 
 ![img_016_tar_000](https://github.com/chicagoedt/team-air-suas-2024/assets/92337557/9160f895-8815-46d2-ba93-5d68b9d06b34)
-<<<<<<< HEAD
-=======
-
-Members:
-    Shaan Mehta
->>>>>>> c49b809a5e9054d4d0d078087bcfb147b308947f

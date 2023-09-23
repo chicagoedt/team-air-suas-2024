@@ -7,7 +7,7 @@ Meeting minutes: Wednesday 6pm, Friday 4pm (optional), Saturday 2pm
 Captains: Manh Phan & Advik Sikligar
 
 Team Members:
-- Name
+- Ivan Martinez
 
 **Where to start**
 

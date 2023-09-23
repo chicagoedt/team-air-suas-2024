@@ -12,7 +12,7 @@ Team Members:
 - Gregg
 - Aiden
 - Ethan
-- Shaan Mehta
+- AJ
 
 **Where to start**
 

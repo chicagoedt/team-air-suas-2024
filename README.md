@@ -10,6 +10,7 @@ Team Members:
 - Davin
 - Gregg
 - Aiden
+- Ethan
 
 
 **Where to start**

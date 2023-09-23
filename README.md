@@ -9,6 +9,7 @@ Captains: Manh Phan & Advik Sikligar
 Team Members:
 - Davin
 - Gregg
+- Aiden
 
 
 **Where to start**

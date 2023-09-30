@@ -4,7 +4,7 @@ from shutil import rmtree
 from PIL import Image
 
 import vars
-from sim_image import SimImage
+from sim_image import SimImage, SHAPES, COLORS
 from gen_train_images import generateEmptyImages
 
 
@@ -13,9 +13,12 @@ def main():
     numTarget = input("How many targets per snapshot? (press enter for 1) >> ") 
     numTarget = 1 if numTarget == "" else int(numTarget)
 
+    shape = input("What shape? Possible shapes: " + str(SHAPES) + " (press enter for random) >> ")
+    shape = "random" if shape == "" else shape
+
     rotateTarget = True if input("Rotate target? (press enter for yes) >> ") == "" else False
 
-    shapeColor = input("What shape color? (press enter for random) >> ")
+    shapeColor = input("What shape color? Possible colors: " + str(list(COLORS)) + " (press enter for random) >> ")
     shapeColor = "random" if shapeColor == "" else shapeColor
 
     letter = input("What letter? (press enter for random) >> ")
@@ -24,7 +27,7 @@ def main():
     letterColor = input("What letter color? (press enter for random) >> ")
     letterColor = "random" if letterColor == "" else letterColor
 
-    print(numTarget, rotateTarget, shapeColor, letter, letterColor)
+    print(numTarget, shape, rotateTarget, shapeColor, letter, letterColor)
 
     os.chdir(os.path.dirname(__file__))
 
@@ -62,7 +65,7 @@ def main():
             for i in range(numTarget):
                 targetFilename = filename[:-4] + f"_tar_{i:03}"
                 sim = SimImage(snapshot, targetFilename)
-                sim.setTargetParams(rotateTarget, shapeColor, letter, letterColor)
+                sim.setTargetParams(rotateTarget, shapeColor, letter, letterColor, shape)
                 sim.practiceTarget()
 
 

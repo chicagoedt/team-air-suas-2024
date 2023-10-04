@@ -11,18 +11,40 @@ import vars
 
 # constants
 SHAPES = (
-    "triangle", "square", "pentagon", "hexagon", "heptagon",
-    "octagon", "circle", "semicircle", "quartercircle",
-    "rect", "star", "trap", "cross"
+    "triangle",
+    #"square",
+    "pentagon",
+    #"hexagon",
+    #"heptagon",
+    #"octagon",
+    "circle",
+    "semicircle",
+    "quartercircle",
+    "rect",
+    "star",
+    #"trap",
+    "cross"
 )
-SPECIAL_CASES = ["semicircle", "quartercircle",
-                 "rect", "star", "trap", "cross"]
-POLYGONS = ["triangle", "square", "pentagon", "hexagon", "heptagon", "octagon"]
+
+
+SPECIAL_CASES = ["semicircle",
+                 "quartercircle",
+                 "rect",
+                 "star",
+                 "trap",
+                 "cross"]
+POLYGONS = ["triangle",
+            "square",
+            "pentagon",
+            "hexagon",
+            "heptagon",
+            "octagon"
+            ]
 
 COLORS = {
     "white": (255, 255, 255),  # White
     "black": (0, 0, 0),  # Black
-    "gray": (127, 127, 127),  # Gray
+    #"gray": (127, 127, 127),  # Gray
     "red": (255, 0, 0),  # Red
     "green": (0, 255, 0),  # Green
     "blue": (0, 0, 255),  # Blue
@@ -82,7 +104,8 @@ def generateSeed(params=None) -> dict:
     if seed["rotation"] is None:
         seed["rotation"] = randint(0, 359)
 
-    seed["shape"] = SHAPES[randint(0, 12)]
+    if seed["shape"] is None:
+        seed["shape"] =  SHAPES[randint(0, 7)]
 
     if seed["shapeColor"] is None:
         seed["shapeColor"] = chooseColor(exclude=seed.get("letterColor"))
@@ -142,12 +165,13 @@ class SimImage:
         self.filename = f
         self.targets = []
 
-    def setTargetParams(self, rot, shpColor, ltr, ltrColor):
+    def setTargetParams(self, rot, shpColor, ltr, ltrColor, shp):
         self.seed = {
             "rotate": rot,
             "shapeColor": shpColor,
             "letter": ltr,
-            "letterColor": ltrColor
+            "letterColor": ltrColor,
+            "shape": shp
         }
 
     def createTarget(self, **kwargs):

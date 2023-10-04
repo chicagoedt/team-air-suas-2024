@@ -1,3 +1,31 @@
+# Color detection
+
+**1. Setup Requirement**
+
+install these libraries: opencv-python, numpy
+
+    pip3 install opencv-python
+    pip3 install numpy   
+
+**2. Where to begin**
+
+  **Main file**: colorDetection.py
+
+  You can start with colorDetection.py which detects the shape color and letter color of a target.
+
+  Let say we want to pass the img_020_tar_001.jpg
+
+![image](https://github.com/chicagoedt/team-air-suas-2024/assets/92337557/0f7dae13-df01-4aae-a98a-e9d655689999)
+
+Its relative path is /img_020_tar_001.jpg. So you may set the values for folderPath and imgName_list as follow:
+
+![image](https://github.com/chicagoedt/team-air-suas-2024/assets/92337557/5feb16c0-0dc0-43ec-8a37-d57d5627bb2e)
+
+It should get the shape color be blue and letter color be red like in the image below:
+
+![image](https://github.com/chicagoedt/team-air-suas-2024/assets/92337557/aa286d51-8f03-48e5-a17e-1fb18f61dfb6)
+
+
 # Locating target using color
 
 **1. Setup Requirement**
@@ -43,6 +71,4 @@ large input image. Notice that the algorithm correctly finds the orange target a
 That is an issue that need to be resolved.
 
 ![image](https://github.com/chicagoedt/team-air-suas-2024/assets/92337557/c877f727-6690-4e09-a829-152d85a82caf)     ![image](https://github.com/chicagoedt/team-air-suas-2024/assets/92337557/926fbce4-10d9-43c9-869e-c9f01f5fae14)
-
-
 

@@ -6,9 +6,30 @@ from PIL import Image
 from shapely import affinity
 
 import vars
+from sim_image import SimImage, SHAPES, COLORS
 from target import *
 from snapshot import *
 
+def inputParameters(): 
+    # user inputs
+    numTargets = int(input("\nHow many target images do you want to generate for each snapshot? >> "))
+    numTargets = 1 if numTargets == "" else int(numTargets)
+
+    shape = input("What shape? Possible shapes: " + str(SHAPES) + " (press enter for random) >> ")
+    shape = "random" if shape == "" else shape
+
+    rotateTarget = True if input("Rotate target? (press enter for yes) >> ") == "" else False
+
+    shapeColor = input("What shape color? Possible colors: " + str(list(COLORS)) + " (press enter for random) >> ")
+    shapeColor = "random" if shapeColor == "" else shapeColor
+
+    letter = input("What letter? (press enter for random) >> ")
+    letter = "random" if letter == "" else letter
+
+    letterColor = input("What letter color? (press enter for random) >> ")
+    letterColor = "random" if letterColor == "" else letterColor
+
+    return numTargets, shape, rotateTarget, shapeColor, letter, letterColor
 
 def main():
     os.chdir(os.path.dirname(__file__))
@@ -31,12 +52,14 @@ def main():
 
     numSnapshots = len(os.listdir(vars.noTargetDir))
 
-    numTargets = int(
-        input("\nHow many target images do you want to generate for each snapshot? >> "))
+    #Gets input from user
+    numTargets, shape, rotateTarget, shapeColor, letter, letterColor = inputParameters()
+    print(numTargets, shape, rotateTarget, shapeColor, letter, letterColor)
+
     print(f"\nGenerating {numTargets * numSnapshots} target images...\n")
 
     start_time = time.time()
-    generateTargetImages(numTargets)
+    generateTargetImages(numTargets, shape, rotateTarget, shapeColor, letter, letterColor)
     print(f"\ntime: {time.time() - start_time:.2f} seconds\n")
 
 
@@ -69,7 +92,7 @@ def generateEmptyImages(runway):
 
 
 # create runway images with targets on them
-def generateTargetImages(num):
+def generateTargetImages(num, shape, rotateTarget, shapeColor, letter, letterColor):
     # check if target directory exists
     if os.path.exists(vars.targetDir):
         rmtree(vars.targetDir)
@@ -90,8 +113,8 @@ def generateTargetImages(num):
                 targetImage = emptyImage
                 targetFilename = filename[:-4] + f"_tar_{i:03}"
 
-                t1 = placeTarget(targetImage, targetFilename)
-                t2 = placeTarget(targetImage, targetFilename, t1)
+                t1 = placeTarget(targetImage, targetFilename, shape, rotateTarget, shapeColor, letter, letterColor)
+                t2 = placeTarget(targetImage, targetFilename, shape, rotateTarget, shapeColor, letter, letterColor, t1)
 
                 # save image
                 targetImage = targetImage.convert("RGB")
@@ -99,9 +122,9 @@ def generateTargetImages(num):
 
 
 # create and place a target on the empty image
-def placeTarget(image, filename, t1=None):
+def placeTarget(image, filename, shape, rotateTarget, shapeColor, letter, letterColor, t1=None):
     # create the target and choose a random location
-    targetImage, targetPolygon, targetSeed = createTarget()
+    targetImage, targetPolygon, targetSeed = createTarget(shape, rotateTarget, shapeColor, letter, letterColor)
     targetPolygon = moveTarget(targetPolygon, t1)
 
     # DEBUG: check if a second target was placed

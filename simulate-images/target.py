@@ -10,38 +10,62 @@ import vars
 colors = {
     "white": (255, 255, 255),  # White
     "black": (0, 0, 0),  # Black
-    "gray": (127, 127, 127),  # Gray
     "red": (255, 0, 0),  # Red
     "green": (0, 255, 0),  # Green
     "blue": (0, 0, 255),  # Blue
-    "yellow": (255, 255, 0),  # Yellow
     "purple": (127, 0, 255),  # Purple
     "orange": (255, 127, 0),  # Orange
     "brown": (72, 59, 39),  # Brown
 }
 
 shapes = (
-    "triangle", "square", "pentagon", "hexagon", "heptagon",
-    "octagon", "circle", "semicircle", "quartercircle",
-    "rect", "star", "trap", "cross"
+    "triangle",
+    "pentagon", 
+    "circle",
+    "semicircle",
+    "quartercircle",
+    "rectangle",
+    "star",
+    "cross"
 )
 
-special_cases = ["semicircle", "quartercircle",
-                 "rect", "star", "trap", "cross"]
-polygons = ["triangle", "square", "pentagon", "hexagon", "heptagon", "octagon"]
+special_cases = ["semicircle",
+                 "quartercircle",
+                 "rectangle",
+                 "star",
+                 "cross"]
+
+polygons = ["triangle",
+            "pentagon", 
+            ]
 
 
 # create a rotated target image and polygon
-def createTarget():
+def createTarget(shape, rotateTarget, shapeColor, letter, letterColor):
     # choose shape, letter, colors, and rotation
     randColors = random.sample(list(colors.keys()), k=2)
     seed = {
-        "shape": shapes[random.randint(0, 12)],
-        "shapeColor": randColors[0],
-        "letter": chr(random.randint(65, 90)),
-        "letterColor": randColors[1],
-        "rotation": random.randint(0, 359)
+        "shape": shape,
+        "shapeColor": shapeColor,
+        "letter": letter,
+        "letterColor": letterColor,
+        "rotation": rotateTarget
     }
+
+    if seed["rotation"] is True:
+        seed["rotation"] = random.randint(0, 359)
+
+    if seed["shape"] is "random":
+        seed["shape"] =  shapes[random.randint(0, 7)]
+
+    if seed["shapeColor"] is "random":
+        seed["shapeColor"] = randColors[0]
+
+    if seed["letter"] is "random":
+        seed["letter"] = chr(random.randint(65, 90))
+
+    if seed["letterColor"] is "random":
+        seed["letterColor"] = randColors[1]
 
     # create a new image, draw shape and letter
     target = Image.new(mode="RGBA", size=vars.targetSize, color="#0000")
@@ -72,6 +96,8 @@ def drawShape(img, shape, color):
     if (shape == "circle"):
         draw.ellipse([0, 0, img.size], fill=colors[color], width=0)
     elif (shape in special_cases):
+        if shape == "rectangle":
+            shape = "rect"
         with Image.open(vars.resourceDir + shape + ".bmp") as bitFile:
             scaleFactor = vars.targetSize[0] / bitFile.width
             newSize = [int(bitFile.width * scaleFactor),
@@ -79,11 +105,18 @@ def drawShape(img, shape, color):
             scaledBitFile = bitFile.resize(newSize)
             draw.bitmap([0, 0], scaledBitFile, fill=colors[color])
     else:
+        numSides = 0
+        if shape == "triangle":
+            numSides = 3
+        #If shape is a pentagon:
+        else:
+            numSides = 5
+        
         draw.regular_polygon(
             [img.size[0] / 2, img.size[1] / 2, img.size[0] / 2],
-            polygons.index(shape) + 3,
-            fill=color
-        )
+            numSides,
+            fill=color)
+
     
     return img
 

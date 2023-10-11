@@ -6,27 +6,27 @@ from PIL import Image
 from shapely import affinity
 
 import vars
-from sim_image import SimImage, SHAPES, COLORS
 from target import *
 from snapshot import *
 
+# Parameters to create a target: shape, letter, shape color, letter color, rotation
 def inputParameters(): 
     # user inputs
-    numTargets = int(input("\nHow many target images do you want to generate for each snapshot? >> "))
+    numTargets = int(input("\nThere are in total of 30 snapshots\nHow many target images do you want to generate for each snapshot? \n>> "))
     numTargets = 1 if numTargets == "" else int(numTargets)
 
-    shape = input("What shape? Possible shapes: " + str(SHAPES) + " (press enter for random) >> ")
+    shape = input("What shape? Possible shapes: " + str(shapes) + " \n(press enter for random) >> ")
     shape = "random" if shape == "" else shape
 
-    rotateTarget = True if input("Rotate target? (press enter for yes) >> ") == "" else False
+    rotateTarget = True if input("Rotate target? \n(press enter for yes) >> ") == "" else False
 
-    shapeColor = input("What shape color? Possible colors: " + str(list(COLORS)) + " (press enter for random) >> ")
+    shapeColor = input("What shape color? Possible colors: " + str(list(colors)) + " \n(press enter for random) >> ")
     shapeColor = "random" if shapeColor == "" else shapeColor
 
-    letter = input("What letter? (press enter for random) >> ")
+    letter = input("What letter? \n(press enter for random) >> ")
     letter = "random" if letter == "" else letter
 
-    letterColor = input("What letter color? (press enter for random) >> ")
+    letterColor = input("What letter color? \n(press enter for random) >> ")
     letterColor = "random" if letterColor == "" else letterColor
 
     return numTargets, shape, rotateTarget, shapeColor, letter, letterColor

@@ -52,19 +52,20 @@ def createTarget(shape, rotateTarget, shapeColor, letter, letterColor):
         "rotation": rotateTarget
     }
 
-    if seed["rotation"] is True:
+    # decide the seed of the target: shape, letter, color, rotation
+    if seed["rotation"] == True:
         seed["rotation"] = random.randint(0, 359)
 
-    if seed["shape"] is "random":
+    if seed["shape"] == "random":
         seed["shape"] =  shapes[random.randint(0, 7)]
 
-    if seed["shapeColor"] is "random":
+    if seed["shapeColor"] == "random":
         seed["shapeColor"] = randColors[0]
 
-    if seed["letter"] is "random":
+    if seed["letter"] == "random":
         seed["letter"] = chr(random.randint(65, 90))
 
-    if seed["letterColor"] is "random":
+    if seed["letterColor"] == "random":
         seed["letterColor"] = randColors[1]
 
     # create a new image, draw shape and letter
@@ -96,8 +97,6 @@ def drawShape(img, shape, color):
     if (shape == "circle"):
         draw.ellipse([0, 0, img.size], fill=colors[color], width=0)
     elif (shape in special_cases):
-        if shape == "rectangle":
-            shape = "rect"
         with Image.open(vars.resourceDir + shape + ".bmp") as bitFile:
             scaleFactor = vars.targetSize[0] / bitFile.width
             newSize = [int(bitFile.width * scaleFactor),
@@ -105,19 +104,23 @@ def drawShape(img, shape, color):
             scaledBitFile = bitFile.resize(newSize)
             draw.bitmap([0, 0], scaledBitFile, fill=colors[color])
     else:
+        # set up parameters for draw regular_polygon
+        center = (img.size[0] / 2, img.size[1] / 2)
+        radius = img.size[0] / 2
         numSides = 0
         if shape == "triangle":
             numSides = 3
+            radius += 10 # make the triangle bigger to contain big letter such as W
         #If shape is a pentagon:
         else:
             numSides = 5
         
+        # draw regular_polygon
         draw.regular_polygon(
-            [img.size[0] / 2, img.size[1] / 2, img.size[0] / 2],
+            (center, radius),
             numSides,
             fill=color)
 
-    
     return img
 
 

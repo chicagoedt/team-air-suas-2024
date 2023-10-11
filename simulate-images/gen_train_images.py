@@ -9,28 +9,6 @@ import vars
 from target import *
 from snapshot import *
 
-# Parameters to create a target: shape, letter, shape color, letter color, rotation
-def inputParameters(): 
-    # user inputs
-    numTargets = int(input("\nThere are in total of 30 snapshots\nHow many target images do you want to generate for each snapshot? \n>> "))
-    numTargets = 1 if numTargets == "" else int(numTargets)
-
-    shape = input("What shape? Possible shapes: " + str(shapes) + " \n(press enter for random) >> ")
-    shape = "random" if shape == "" else shape
-
-    rotateTarget = True if input("Rotate target? \n(press enter for yes) >> ") == "" else False
-
-    shapeColor = input("What shape color? Possible colors: " + str(list(colors)) + " \n(press enter for random) >> ")
-    shapeColor = "random" if shapeColor == "" else shapeColor
-
-    letter = input("What letter? \n(press enter for random) >> ")
-    letter = "random" if letter == "" else letter
-
-    letterColor = input("What letter color? \n(press enter for random) >> ")
-    letterColor = "random" if letterColor == "" else letterColor
-
-    return numTargets, shape, rotateTarget, shapeColor, letter, letterColor
-
 def main():
     os.chdir(os.path.dirname(__file__))
 
@@ -52,16 +30,39 @@ def main():
 
     numSnapshots = len(os.listdir(vars.noTargetDir))
 
-    #Gets input from user
+    # get input from user
     numTargets, shape, rotateTarget, shapeColor, letter, letterColor = inputParameters()
     print(numTargets, shape, rotateTarget, shapeColor, letter, letterColor)
 
     print(f"\nGenerating {numTargets * numSnapshots} target images...\n")
 
+    # generate target images
     start_time = time.time()
     generateTargetImages(numTargets, shape, rotateTarget, shapeColor, letter, letterColor)
     print(f"\ntime: {time.time() - start_time:.2f} seconds\n")
+    print(f"The dataset is generated in directory snapshots/target\n")
 
+# Parameters to create a target: shape, letter, shape color, letter color, rotation
+def inputParameters(): 
+    # user inputs
+    numTargets = int(input("\nThere are in total of 30 snapshots\nHow many target images do you want to generate for each snapshot? \n>> "))
+    numTargets = 1 if numTargets == "" else int(numTargets)
+
+    shape = input("What shape? Possible shapes: " + str(shapes) + " \n(press enter for random) >> ")
+    shape = "random" if shape == "" else shape
+
+    rotateTarget = True if input("Rotate target? \n(press enter for yes) >> ") == "" else False
+
+    shapeColor = input("What shape color? Possible colors: " + str(list(colors)) + " \n(press enter for random) >> ")
+    shapeColor = "random" if shapeColor == "" else shapeColor
+
+    letter = input("What letter? \n(press enter for random) >> ")
+    letter = "random" if letter == "" else letter
+
+    letterColor = input("What letter color? \n(press enter for random) >> ")
+    letterColor = "random" if letterColor == "" else letterColor
+
+    return numTargets, shape, rotateTarget, shapeColor, letter, letterColor
 
 # create the runway images that the targets will be placed on
 def generateEmptyImages(runway):
@@ -104,6 +105,16 @@ def generateTargetImages(num, shape, rotateTarget, shapeColor, letter, letterCol
     with open(vars.targetInfoPath, "w") as info:
         info.write("filename,shape,shapeColor,letter,letterColor\n")
 
+    # create directory images
+    if os.path.exists(vars.imageDir):             # if dir exists then delete everything inside
+        rmtree(vars.imageDir)
+    os.makedirs(vars.imageDir)
+
+    # create directory labels
+    if os.path.exists(vars.labelDir):             # if dir exists then delete everything inside
+        rmtree(vars.labelDir)
+    os.makedirs(vars.labelDir)
+
     # create <num> simulated images for each empty image
     for filename in os.listdir(vars.noTargetDir):
         print(f"Simulating targets for {filename}")
@@ -118,7 +129,7 @@ def generateTargetImages(num, shape, rotateTarget, shapeColor, letter, letterCol
 
                 # save image
                 targetImage = targetImage.convert("RGB")
-                targetImage.save(os.path.join(vars.targetDir, targetFilename + ".jpg"))
+                targetImage.save(os.path.join(vars.imageDir, targetFilename + ".jpg"))
 
 
 # create and place a target on the empty image
@@ -140,8 +151,8 @@ def placeTarget(image, filename, shape, rotateTarget, shapeColor, letter, letter
         info.write(f"{filename},{','.join(seed)}\n")
 
     # create/write to yolo file for target
-    yoloString = writeYolo(targetPolygon)
-    yoloPath = os.path.join(vars.targetDir, filename + ".yolo")
+    yoloString= writeYolo(targetPolygon)
+    yoloPath = os.path.join(vars.labelDir, filename + ".txt")
     mode = "a" if os.path.exists(yoloPath) else "w"
     with open(yoloPath, mode) as yoloFile:
         yoloFile.write(yoloString + "\n")
@@ -149,6 +160,11 @@ def placeTarget(image, filename, shape, rotateTarget, shapeColor, letter, letter
     # place target on image
     xMin, yMin, xMax, yMax = [int(b) for b in targetPolygon.bounds]
     image.alpha_composite(targetImage, dest=(xMin, yMin))
+
+    # # TEST : will be removed later
+    # shape = [(xMin, yMin), (xMax, yMax)]
+    # image1 = ImageDraw.Draw(image)
+    # image1.rectangle(shape, fill=None, outline='red')
 
     return targetPolygon
 

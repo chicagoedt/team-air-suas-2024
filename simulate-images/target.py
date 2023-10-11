@@ -110,7 +110,7 @@ def drawShape(img, shape, color):
         numSides = 0
         if shape == "triangle":
             numSides = 3
-            radius += 10 # make the triangle bigger to contain big letter such as W
+            radius += 7 # make the triangle bigger to contain big letter such as W
         #If shape is a pentagon:
         else:
             numSides = 5

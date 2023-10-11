@@ -5,6 +5,8 @@ from shapely.geometry import box
 
 # directories
 noTargetDir = "snapshots/no_target/"
+imageDir = "snapshots/target/images"
+labelDir = "snapshots/target/labels"
 targetDir = "snapshots/target/"
 targetPracticeDir = "snapshots/target_practice/"
 resourceDir = "target_resources/"

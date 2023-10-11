@@ -12,43 +12,31 @@ import vars
 # constants
 SHAPES = (
     "triangle",
-    #"square",
     "pentagon",
-    #"hexagon",
-    #"heptagon",
-    #"octagon",
     "circle",
     "semicircle",
     "quartercircle",
-    "rect",
+    "rectangle",
     "star",
-    #"trap",
     "cross"
 )
 
 
 SPECIAL_CASES = ["semicircle",
                  "quartercircle",
-                 "rect",
+                 "rectangle",
                  "star",
-                 "trap",
                  "cross"]
 POLYGONS = ["triangle",
-            "square",
             "pentagon",
-            "hexagon",
-            "heptagon",
-            "octagon"
             ]
 
 COLORS = {
     "white": (255, 255, 255),  # White
     "black": (0, 0, 0),  # Black
-    #"gray": (127, 127, 127),  # Gray
     "red": (255, 0, 0),  # Red
     "green": (0, 255, 0),  # Green
     "blue": (0, 0, 255),  # Blue
-    "yellow": (255, 255, 0),  # Yellow
     "purple": (127, 0, 255),  # Purple
     "orange": (255, 127, 0),  # Orange
     "brown": (72, 59, 39),  # Brown
@@ -126,6 +114,8 @@ def drawShape(img, shape, color):
     if (shape == "circle"):
         draw.ellipse([0, 0, img.size], fill=COLORS[color], width=0)
     elif (shape in SPECIAL_CASES):
+        if shape == "rectangle":
+            shape = "rect"
         with Image.open(vars.resourceDir + shape + ".bmp") as bitFile:
             scaleFactor = vars.targetSize[0] / bitFile.width
             newSize = [int(bitFile.width * scaleFactor),
@@ -133,9 +123,15 @@ def drawShape(img, shape, color):
             scaledBitFile = bitFile.resize(newSize)
             draw.bitmap([0, 0], scaledBitFile, fill=COLORS[color])
     else:
+        numOfSides = 0
+        if (shape == "triangle"):
+            numOfSides = 3
+        else:
+            numOfSides = 5
+        
         draw.regular_polygon(
             [img.size[0] / 2, img.size[1] / 2, img.size[0] / 2],
-            POLYGONS.index(shape) + 3,
+            numOfSides,
             fill=COLORS[color]
         )
 

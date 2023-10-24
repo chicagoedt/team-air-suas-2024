@@ -36,3 +36,6 @@ imageSizeFt = [l / pxPerFt for l in imageSizePx]  # ft
 scaleFactor = pxPerFt / runwayPxPerFt  # no unit
 (snapshotWidth, snapshotHeight) = [int(dim * runwayPxPerFt) for dim in imageSizeFt]  # px
 targetSize = [int(f * pxPerFt) for f in targetSizeFt]  # px
+
+# useful vars for YOLO customTrain
+imageSizePxYolo = (640, 640)

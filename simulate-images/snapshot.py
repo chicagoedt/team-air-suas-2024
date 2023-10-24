@@ -8,7 +8,7 @@ import vars
 def takePicture(runway, snapshot):
     snapshotCorners = ravel((snapshot.exterior.coords[3] + snapshot.exterior.coords[2] +
                             snapshot.exterior.coords[1] + snapshot.exterior.coords[0]))
-    img = runway.transform(vars.imageSizePx, QuadTransform(snapshotCorners))
+    img = runway.transform(vars.imageSizePxYolo, QuadTransform(snapshotCorners))
     return img
 
 

@@ -121,7 +121,7 @@ def generateTargetImages(num, shape, rotateTarget, shapeColor, letter, letterCol
         with Image.open(os.path.join(vars.noTargetDir, filename)) as emptyImage:
             emptyImage = emptyImage.convert("RGBA")
             for i in range(num):
-                targetImage = emptyImage
+                targetImage = emptyImage.copy() # fix the error where there it accidentally place too many target in an image
                 targetFilename = filename[:-4] + f"_tar_{i:03}"
 
                 t1 = placeTarget(targetImage, targetFilename, shape, rotateTarget, shapeColor, letter, letterColor)
@@ -182,10 +182,10 @@ def writeYolo(polygon):
     # write yolo file in this format:
     #   0 <bbox center x> <bbox center y> <bbox width> <bbox height>
     yolo = [
-        center[0] / vars.imageSizePx[0],
-        center[1] / vars.imageSizePx[1],
-        width / vars.imageSizePx[0],
-        height / vars.imageSizePx[1]
+        center[0] / vars.imageSizePxYolo[0],
+        center[1] / vars.imageSizePxYolo[1],
+        width / vars.imageSizePxYolo[0],
+        height / vars.imageSizePxYolo[1]
     ]  # divide by image dimensions to scale to 1
 
     yoloString = "0 " + " ".join([f"{y:.8f}" for y in yolo])

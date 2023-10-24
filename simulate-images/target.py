@@ -150,8 +150,8 @@ def moveTarget(polygon, t1=None):
 
     # choose random location
     offset = [
-        random.randint(0, vars.imageSizePx[0] - targetWidth),
-        random.randint(0, vars.imageSizePx[1] - targetHeight),
+        random.randint(0, vars.imageSizePxYolo[0] - targetWidth),
+        random.randint(0, vars.imageSizePxYolo[1] - targetWidth),
     ]  # upper left corner of target
 
     # move to location

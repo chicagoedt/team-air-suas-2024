@@ -2,17 +2,17 @@ import os
 from shutil import rmtree
 from gen_train_images import main
 
-datasetName = "triangle"
+datasetName = "triangleRotate"
 destFolder = "./snapshots"
-totalImg = 900
+totalImg = 300 * 180
 
 datasetPath = os.path.join(destFolder, datasetName)
 trainPath = os.path.join(datasetPath, "train")
 validPath = os.path.join(datasetPath, "valid")
 testPath = os.path.join(datasetPath, "test")
-numTrainImg = totalImg * 7 / 10
-numValidImg = totalImg * 2 / 10
-numTestImg = totalImg * 1 / 10
+numTrainImg = totalImg * 7 / 10 # 70%
+numValidImg = totalImg * 2 / 10 # 20%
+numTestImg = totalImg * 1 / 10  # 10%
 
 # create a folder datasetName inside destFolder
 if os.path.exists(datasetPath):

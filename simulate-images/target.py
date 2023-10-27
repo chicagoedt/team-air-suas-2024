@@ -6,6 +6,18 @@ from shapely.geometry import box
 
 import vars
 
+# YOLO map index
+YOLO = {
+    "triangle": 0,
+    "pentagon": 1, 
+    "circle": 2,
+    "semicircle": 3,
+    "quartercircle": 4,
+    "rectangle": 5,
+    "star": 6,
+    "cross": 7
+}
+
 # constants
 colors = {
     "white": (255, 255, 255),  # White
@@ -95,7 +107,9 @@ def drawShape(img, shape, color):
     draw = ImageDraw.Draw(img)
 
     if (shape == "circle"):
-        draw.ellipse([0, 0, img.size], fill=colors[color], width=0)
+        diameter = img.size[1] if (img.size[0] > img.size[1]) else img.size[0]
+        diameter -= 4
+        draw.ellipse([0, 0, (diameter, diameter)], fill=colors[color], width=0)
     elif (shape in special_cases):
         with Image.open(vars.resourceDir + shape + ".bmp") as bitFile:
             scaleFactor = vars.targetSize[0] / bitFile.width

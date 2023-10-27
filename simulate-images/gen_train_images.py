@@ -136,12 +136,12 @@ def generateTargetImages(folder, num, shape, rotateTarget, shapeColor, letter, l
                 targetImage = emptyImage.copy() # fix the error where there it accidentally place too many target in an image
                 targetFilename = filename[:-4] + f"_tar_{i:03}"
 
-                t1 = placeTarget(targetImage, targetFilename, labelDir, shape, rotateTarget, shapeColor, letter, letterColor)
-                t2 = placeTarget(targetImage, targetFilename, labelDir, shape, rotateTarget, shapeColor, letter, letterColor, t1)
+                t1, updatedFilename = placeTarget(targetImage, targetFilename, labelDir, shape, rotateTarget, shapeColor, letter, letterColor)
+                #t2 = placeTarget(targetImage, targetFilename, labelDir, shape, rotateTarget, shapeColor, letter, letterColor, t1)
 
                 # save image
                 targetImage = targetImage.convert("RGB")
-                targetImage.save(os.path.join(imageDir, targetFilename + ".jpg"))
+                targetImage.save(os.path.join(imageDir, updatedFilename + ".jpg"))
 
 
 # create and place a target on the empty image
@@ -150,6 +150,7 @@ def placeTarget(image, filename, labelDir, shape, rotateTarget, shapeColor, lett
     targetImage, targetPolygon, targetSeed = createTarget(shape, rotateTarget, shapeColor, letter, letterColor)
     targetPolygon = moveTarget(targetPolygon, t1)
 
+    #print(targetSeed)
     # DEBUG: check if a second target was placed
     if t1 is not None:
         if targetPolygon is None:
@@ -162,9 +163,11 @@ def placeTarget(image, filename, labelDir, shape, rotateTarget, shapeColor, lett
         seed = [i for i in targetSeed.values()][:4]
         info.write(f"{filename},{','.join(seed)}\n")
 
+    updatedFilename = filename + '_' + targetSeed['shape']
+
     # create/write to yolo file for target
-    yoloString= writeYolo(targetPolygon)
-    yoloPath = os.path.join(labelDir, filename + ".txt")
+    yoloString= writeYolo(targetPolygon, targetSeed['shape'])
+    yoloPath = os.path.join(labelDir, updatedFilename + ".txt")
     mode = "a" if os.path.exists(yoloPath) else "w"
     with open(yoloPath, mode) as yoloFile:
         yoloFile.write(yoloString + "\n")
@@ -173,16 +176,11 @@ def placeTarget(image, filename, labelDir, shape, rotateTarget, shapeColor, lett
     xMin, yMin, xMax, yMax = [int(b) for b in targetPolygon.bounds]
     image.alpha_composite(targetImage, dest=(xMin, yMin))
 
-    # # TEST : will be removed later
-    # shape = [(xMin, yMin), (xMax, yMax)]
-    # image1 = ImageDraw.Draw(image)
-    # image1.rectangle(shape, fill=None, outline='red')
-
-    return targetPolygon
+    return targetPolygon, updatedFilename
 
 
 # write the yolo file containing the location of the target on the image
-def writeYolo(polygon):
+def writeYolo(polygon, targetShape):
     xMin, yMin, xMax, yMax = [int(b) for b in polygon.bounds]
     width = xMax - xMin
     height = yMax - yMin
@@ -200,7 +198,9 @@ def writeYolo(polygon):
         height / vars.imageSizePxYolo[1]
     ]  # divide by image dimensions to scale to 1
 
-    yoloString = "0 " + " ".join([f"{y:.8f}" for y in yolo])
+    shapeClass = YOLO[targetShape]
+
+    yoloString = str(shapeClass) + " " + " ".join([f"{y:.8f}" for y in yolo])
     # print(f"  yolo: \"{yoloString}\"")
 
     return yoloString

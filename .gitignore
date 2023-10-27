@@ -17,3 +17,6 @@ simulate-images/target_images/*
 simulate-images/final_images/*
 *.png~
 *.xcf
+
+# yolo
+yolo/runs/

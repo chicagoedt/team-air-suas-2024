@@ -19,4 +19,4 @@ simulate-images/final_images/*
 *.xcf
 
 # yolo
-yolo/runs/
+yolo/runs/*

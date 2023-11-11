@@ -65,8 +65,8 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
 
     bbox = sh.Polygon([(bbox[0],bbox[1]), #TL
                        (bbox[2],bbox[1]), #TR
-                       (bbox[0],bbox[3]), #BL
-                       (bbox[2],bbox[3]),]) #BR
+                       (bbox[2],bbox[3]), #BL
+                       (bbox[0],bbox[3]),]) #BR
 
 
 
@@ -82,13 +82,24 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
             bottom = y + 640
             region = sh.Polygon([(left,top),
                                  (right,top),
-                                 (left,bottom),
+                                 (right,bottom),
                                  (left,bottom),])
             folder = Path(f"snapshots/chunks/chunks{id}")
             filename = folder / f"{ind_x}_{ind_y}_.jpg"
             crop_img = image.crop((left, top, right, bottom))
-
             new_bbox = check_within(bbox, region)
+            if new_bbox :
+                coords = sh.get_coordinates(region)
+                offset_x = coords[0,0]
+                offset_y = coords[0, 1]
+                bbox_trans = [new_bbox[0]-offset_x,
+                              new_bbox[1]-offset_y,
+                              new_bbox[2]-offset_x,
+                              new_bbox[3]-offset_y,]
+                # new_bbox_coords = [(x - offset_x, y - offset_y) for x,y in bbox_coords]
+                # new_bbox = sh.transform(lambda x, y: (x - offset_x, y + offset_y), new_bbox)
+                print(f"Write the saving function:  {bbox_trans}  {filename}")
+
 
             print(f"Filename: {filename}")
             folder.mkdir(parents=True, exist_ok=True)
@@ -101,9 +112,10 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
 
 def check_within( bbox, region):
     is_within = sh.contains(region, bbox)
+    print(bbox)
     if(is_within):
         return bbox.bounds
-    elif(bbox.intersects(region)):
+    elif bbox.intersects(region):
         return (bbox.intersection(region)).bounds
     else:
         return None
@@ -145,11 +157,25 @@ def test_check_within():
     # print("All test cases passed")
 
 
+def read_file(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            file_content = file.read()
+            print(file_content)
+            file_content = [float(item) for item in file_content.split()]
+            file_content.pop(0)
+            return file_content
+    except FileNotFoundError:
+        return f"File not found: {file_path}"
+    except Exception as e:
+        return f"An error occurred: {str(e)}"
 
-
-
-img = Image.open("C://Users//yugio//Code//team-air-suas-2024//output_image.png")
+# Example usage:
+file_path = 'C://Users//yugio//Code//team-air-suas-2024//simulate-images//Test4k.yolo'
+file_content = read_file(file_path)
+img = Image.open("C://Users//yugio//Code//team-air-suas-2024//simulate-images//Test4k.jpg")
 crop_size = [640,640]
-# crop_img(img, crop_size)
 
-test_check_within()
+crop_img(img, crop_size, file_content)
+
+# test_check_within()

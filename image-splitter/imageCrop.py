@@ -5,6 +5,8 @@ import os
 imagesDir = "/Users/ethanky/Documents/GitHub/team-air-suas-2024/image-splitter/myImages"
 imgPath = "/Users/ethanky/Documents/GitHub/team-air-suas-2024/simulate-images/snapshots/target/img_001_tar_000.jpg"
 
+targetSize = 100
+
 def printSeveralImages(img, x, y, a, b):
     #Sets x and y (start and end) positions
     startx = x
@@ -24,8 +26,10 @@ def printSeveralImages(img, x, y, a, b):
             cropped_image = img[startx:endx, starty:endy]
             print(str(startx)+"-"+str(starty)+"-"+str(endx)+"-"+str(endy))
             cv2.imwrite(imagesDir+"/"+str(startx)+"-"+str(starty)+"-"+str(endx)+"-"+str(endy)+".jpg", cropped_image)
-            startx += a
-        starty += b
+            #startx += a
+            startx += (a - targetSize)
+        #starty += b
+        starty += (b - targetSize)
         startx = x
 
 def printLayers(img, a, b):
@@ -38,9 +42,9 @@ def printLayers(img, a, b):
     #if os.path.exists(vars.targetDir):
     #    rmtree(vars.targetDir)
     printSeveralImages(img, 0,    0,    a, b)
-    printSeveralImages(img, a//2, 0,    a, b)
-    printSeveralImages(img, 0,    b//2, a, b)
-    printSeveralImages(img, a//2, b//2, a, b)
+    #printSeveralImages(img, a//2, 0,    a, b)
+    #printSeveralImages(img, 0,    b//2, a, b)
+    #printSeveralImages(img, a//2, b//2, a, b)
 
 #Gets image given path
 img = cv2.imread(imgPath)

@@ -78,14 +78,14 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
 
             left = x
             top = y
-            right = x + 640
-            bottom = y + 640
+            right = x + crop_size[0]
+            bottom = y + crop_size[1]
             region = sh.Polygon([(left,top),
                                  (right,top),
                                  (right,bottom),
                                  (left,bottom),])
             folder = Path(f"snapshots/chunks/chunks{id}")
-            filename = folder / f"{ind_x}_{ind_y}_.jpg"
+            filename = folder / f"{ind_x}_{ind_y}"
             crop_img = image.crop((left, top, right, bottom))
             new_bbox = check_within(bbox, region)
             if new_bbox :
@@ -96,9 +96,20 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
                               new_bbox[1]-offset_y,
                               new_bbox[2]-offset_x,
                               new_bbox[3]-offset_y,]
+                width = (bbox_trans[2] - bbox_trans[0])/crop_size[0]
+                height = (bbox_trans[3] - bbox_trans[1])/crop_size[1]
+                center_x = ((bbox_trans[2] + bbox_trans[0]) / 2) / crop_size[0]
+                center_y = ((bbox_trans[3] + bbox_trans[1]) / 2) / crop_size[1]
+
+                trans_yolo = [0, center_x, center_y, width, height]
+
                 # new_bbox_coords = [(x - offset_x, y - offset_y) for x,y in bbox_coords]
                 # new_bbox = sh.transform(lambda x, y: (x - offset_x, y + offset_y), new_bbox)
-                print(f"Write the saving function:  {bbox_trans}  {filename}")
+                print(f"Write the saving function:  {trans_yolo}  {filename}")
+                list_str = ' '.join(map(str, trans_yolo))
+                # Write the string to the file
+                with open(f"{filename}.yolo", 'w') as file:
+                    file.write(list_str)
 
 
             print(f"Filename: {filename}")
@@ -106,7 +117,7 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
             if any(folder.iterdir()):
                 print(f"Error: The directory contains image files: {folder}")
 
-            crop_img.save(filename)
+            crop_img.save(f"{filename}.jpg")
 
 
 

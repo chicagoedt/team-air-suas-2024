@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 import shapely as sh
+import time
 
 # coordinates = (
 #     #Layer 1
@@ -68,6 +69,10 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
                        (bbox[2],bbox[3]), #BL
                        (bbox[0],bbox[3]),]) #BR
 
+    folder = Path(f"snapshots/chunks/chunks{id}")
+    folder.mkdir(parents=True, exist_ok=True)
+    if any(folder.iterdir()):
+        print(f"Error: The directory contains image files: {folder}")
 
 
     print(f"x_coords:    {x_coords}")
@@ -75,7 +80,6 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
 
     for ind_x,x in enumerate(x_coords):
         for ind_y,y in enumerate(y_coords):
-
             left = x
             top = y
             right = x + crop_size[0]
@@ -84,8 +88,8 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
                                  (right,top),
                                  (right,bottom),
                                  (left,bottom),])
-            folder = Path(f"snapshots/chunks/chunks{id}")
             filename = folder / f"{ind_x}_{ind_y}"
+            print(f"Filename: {filename}")
             crop_img = image.crop((left, top, right, bottom))
             new_bbox = check_within(bbox, region)
             if new_bbox :
@@ -111,13 +115,10 @@ def crop_img(image, crop_size: list,yoloInfo,id = 0, num_imgs = None):
                 with open(f"{filename}.yolo", 'w') as file:
                     file.write(list_str)
 
-
-            print(f"Filename: {filename}")
-            folder.mkdir(parents=True, exist_ok=True)
-            if any(folder.iterdir()):
-                print(f"Error: The directory contains image files: {folder}")
-
             crop_img.save(f"{filename}.jpg")
+
+
+
 
 
 
@@ -186,7 +187,9 @@ file_path = 'C://Users//yugio//Code//team-air-suas-2024//simulate-images//Test4k
 file_content = read_file(file_path)
 img = Image.open("C://Users//yugio//Code//team-air-suas-2024//simulate-images//Test4k.jpg")
 crop_size = [640,640]
-
+# start_time = time.time()
 crop_img(img, crop_size, file_content)
-
+# time = time.time() - start_time
+# time = timeit.timeit(lambda: crop_img(img, crop_size, file_content))
+print(time)
 # test_check_within()

@@ -20,3 +20,5 @@ simulate-images/final_images/*
 
 # yolo
 yolo/runs/
+odlc/yolo/
+

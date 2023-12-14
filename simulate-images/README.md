@@ -6,9 +6,7 @@
   
    - You can install them with PIP (a Python package management):
   
-         pip3 install Pillow 
-
-         pip3 install shapely
+         pip3 install Pillow shapely
 
 **2. How to use it**
 

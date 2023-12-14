@@ -19,6 +19,5 @@ simulate-images/final_images/*
 *.xcf
 
 # yolo
-yolo/runs/
+runs/
 odlc/yolo/
-

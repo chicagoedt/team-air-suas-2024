@@ -5,8 +5,7 @@
   Install the following libraries: opencv-python (for computer vision), easyocr (text-detection pre-trained model)
 
 
-        pip3 install opencv-python
-        pip3 install easyocr
+        pip3 install opencv-python easyocr
 
 **2. Where to begin**
 

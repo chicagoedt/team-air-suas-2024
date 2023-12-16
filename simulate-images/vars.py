@@ -10,7 +10,7 @@ labelDir = "snapshots/target/labels"
 targetDir = "snapshots/target/"
 targetPracticeDir = "snapshots/target_practice/"
 resourceDir = "target_resources/"
-targetInfoPath = "snapshots/target_info.csv"
+targetInfoPath = "snapshots/target/target_info.csv"
 targetPracticeInfoPath = "snapshots/target_practice_info.csv"
 
 # constants

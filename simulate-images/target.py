@@ -7,6 +7,17 @@ from shapely.geometry import box
 import vars
 
 # constants
+YOLOs = {
+    "triangle": 0,
+    "pentagon": 1, 
+    "circle": 2,
+    "semicircle": 3,
+    "quartercircle": 4,
+    "rectangle": 5,
+    "star": 6,
+    "cross": 7
+}
+
 colors = {
     "white": (255, 255, 255),  # White
     "black": (0, 0, 0),  # Black
@@ -41,53 +52,53 @@ polygons = ["triangle",
 
 
 # create a rotated target image and polygon
-def createTarget(shape, rotateTarget, shapeColor, letter, letterColor):
+def createTarget(seed):
     # choose shape, letter, colors, and rotation
     randColors = random.sample(list(colors.keys()), k=2)
-    seed = {
-        "shape": shape,
-        "shapeColor": shapeColor,
-        "letter": letter,
-        "letterColor": letterColor,
-        "rotation": rotateTarget
+    targetSeed = {
+        "shape": seed[0],
+        "shapeColor": seed[1],
+        "letter": seed[2],
+        "letterColor": seed[3],
+        "rotation": seed[4]
     }
 
     # decide the seed of the target: shape, letter, color, rotation
-    if seed["rotation"] == True:
-        seed["rotation"] = random.randint(0, 359)
+    if targetSeed["rotation"] == True:
+        targetSeed["rotation"] = random.randint(0, 359)
 
-    if seed["shape"] == "random":
-        seed["shape"] =  shapes[random.randint(0, 7)]
+    if targetSeed["shape"] == "random":
+        targetSeed["shape"] =  shapes[random.randint(0, 7)]
 
-    if seed["shapeColor"] == "random":
-        seed["shapeColor"] = randColors[0]
+    if targetSeed["shapeColor"] == "random":
+        targetSeed["shapeColor"] = randColors[0]
 
-    if seed["letter"] == "random":
-        seed["letter"] = chr(random.randint(65, 90))
+    if targetSeed["letter"] == "random":
+        targetSeed["letter"] = chr(random.randint(65, 90))
 
-    if seed["letterColor"] == "random":
-        seed["letterColor"] = randColors[1]
+    if targetSeed["letterColor"] == "random":
+        targetSeed["letterColor"] = randColors[1]
 
     # create a new image, draw shape and letter
     target = Image.new(mode="RGBA", size=vars.targetSize, color="#0000")
-    target = drawShape(target, seed["shape"], seed["shapeColor"])
-    target = drawLetter(target, seed["letter"], seed["letterColor"])
+    target = drawShape(target, targetSeed["shape"], targetSeed["shapeColor"])
+    target = drawLetter(target, targetSeed["letter"], targetSeed["letterColor"])
 
     # create a polygon for the target
     polygon = box(0, 0, target.size[0], target.size[1])
 
     # rotate the target
-    target = target.rotate(seed["rotation"], expand=True, fillcolor="#0000")
+    target = target.rotate(targetSeed["rotation"], expand=True, fillcolor="#0000")
 
     # rotate the polygon (negative for different origin)
-    polygon = affinity.rotate(polygon, -seed["rotation"])
+    polygon = affinity.rotate(polygon, -targetSeed["rotation"])
     polygon = affinity.translate(
         polygon,
         xoff=-polygon.bounds[0],
         yoff=-polygon.bounds[1]
     )  # snap to axes
 
-    return (target, polygon, seed)
+    return (target, polygon, targetSeed)
 
 
 # draw shape on target
@@ -145,24 +156,24 @@ def drawLetter(img, letter, color):
 
 # move the target polygon to a random location within the snapshot
 # returns None if the placement is invalid (< 30ft from t1)
-def moveTarget(polygon, t1=None):
+def moveTarget(polygon, imgSize):
     xMin, yMin, xMax, yMax = [int(b) for b in polygon.bounds]
     targetWidth = xMax - xMin
     targetHeight = yMax - yMin
 
     # choose random location
     offset = [
-        random.randint(0, vars.imageSizePxYolo[0] - targetWidth),
-        random.randint(0, vars.imageSizePxYolo[1] - targetWidth),
+        random.randint(0, imgSize[0] - targetWidth),
+        random.randint(0, imgSize[1] - targetHeight),
     ]  # upper left corner of target
 
     # move to location
     polygon = affinity.translate(polygon, xoff=offset[0], yoff=offset[1])
 
     # check that it was placed at least 30 ft away from t1
-    if t1 != None:
-        dist = t1.distance(polygon) / vars.pxPerFt
-        if dist < 30:
-            return None
+    # if t1 != None:
+    #     dist = t1.distance(polygon) / vars.pxPerFt
+    #     if dist < 30:
+    #         return None
 
     return polygon

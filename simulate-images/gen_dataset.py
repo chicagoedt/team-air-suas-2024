@@ -1,3 +1,8 @@
+'''
+    Generating dataset for YOLO model
+    possible shapes: 'triangle', 'pentagon', 'circle', 'semicircle', 'quartercircle', 'rectangle', 'star', 'cross'
+'''
+
 import os
 from shutil import rmtree
 from PIL import Image
@@ -5,13 +10,14 @@ import time
 import vars
 import random
 
-import gen_train_images as genTrain
+from target import createTarget, moveTarget
+from gen_practice_images import generateEmptyImages, createStoreFolder, writeYolo, placeTarget
 
 # set input for dataset that you want to generate
-listOfShape = ['triangle', 'rectangle']
-datasetName = "triAndRec"
-destFolder = "snapshots"
-numImgPerShape = 30
+listOfShape = ['triangle', 'rectangle']  # put shape in this list
+datasetName = "triAndRec"  # put a name to dataset
+destFolder = "snapshots"  # put path where you will store the dataset
+numImgPerShape = 30   # put number of images you want to generate
 
 def genDataSet():
     scriptDir = os.path.dirname(__file__)
@@ -31,15 +37,9 @@ def genDataSet():
     os.makedirs(datasetPath)
 
     # create three folders test, train, valid inside folder datasetName
-    os.makedirs(trainPath)
-    os.makedirs(validPath)
-    os.makedirs(testPath)
-    os.makedirs(os.path.join(trainPath, "images"))
-    os.makedirs(os.path.join(trainPath, "labels"))
-    os.makedirs(os.path.join(validPath, "images"))
-    os.makedirs(os.path.join(validPath, "labels"))
-    os.makedirs(os.path.join(testPath, "images"))
-    os.makedirs(os.path.join(testPath, "labels"))
+    createStoreFolder(trainPath)
+    createStoreFolder(validPath)
+    createStoreFolder(testPath)
 
     # create data.yaml
     datasetAbsolutePath = os.path.join(scriptDir, destFolder, datasetName)
@@ -53,7 +53,7 @@ def genDataSet():
         if os.path.exists(vars.noTargetDir):
             rmtree(vars.noTargetDir)
         os.makedirs(vars.noTargetDir)               
-        genTrain.generateEmptyImages(Image.open("reference_images/runway.png"))
+        generateEmptyImages(Image.open("reference_images/runway.png"), vars.imageSizePxYolo)
 
         # gen images for train, valid, test
         genImages(trainPath, numTrainImg, shape, classNumber)
@@ -64,6 +64,7 @@ def genDataSet():
     print(f"time: {time.time() - start_time:.2f} seconds\n")
     print(f"The generated images is generated in directory {datasetPath}\n")
 
+# generate <numImg> training images in folder <path>
 def genImages(path, numImg, shape, classNumber):
 
     print(f"Generating {numImg} target with {shape} images in {path}")
@@ -84,56 +85,20 @@ def genImages(path, numImg, shape, classNumber):
             targetFilename = shape + f"_{i:03}"
 
             # place a target in snapshot
-            targetPolygon = placeTarget(targetImage, shape)
+            seed = [shape, "random", "random", "random", True]
+            targetPolygon, _ = placeTarget(targetImage, seed)
 
             # save image in imagesPath
             targetImage = targetImage.convert("RGB")
             targetImage.save(os.path.join(imagesPath, targetFilename + ".jpg"))
 
             # save yolo txt in labelsPath
-            yoloString = writeYolo(targetPolygon, classNumber)
+            yoloString = writeYolo(targetPolygon, classNumber, targetImage.size)
             yoloPath = os.path.join(labelsPath, targetFilename + ".txt")
             with open(yoloPath, "w") as yoloFile:
                 yoloFile.write(yoloString + "\n")
 
-
-# create and place a target on the empty image
-def placeTarget(image, shape):
-    # create the target and choose a random location
-    targetImage, targetPolygon, targetSeed = genTrain.createTarget(shape, True, "random", "random", "random")
-    targetPolygon = genTrain.moveTarget(targetPolygon)
-
-    # place target on image
-    xMin, yMin, xMax, yMax = [int(b) for b in targetPolygon.bounds]
-    image.alpha_composite(targetImage, dest=(xMin, yMin))
-
-    return targetPolygon
-
-# write the yolo file containing the location of the target on the image
-def writeYolo(polygon, classNumber):
-    xMin, yMin, xMax, yMax = [int(b) for b in polygon.bounds]
-    width = xMax - xMin
-    height = yMax - yMin
-
-    # find centerpoint of target
-    center = [int(c) for c in polygon.centroid.coords[0]]
-    # print("  center:", center)
-
-    # write yolo file in this format:
-    #   0 <bbox center x> <bbox center y> <bbox width> <bbox height>
-    yolo = [
-        center[0] / vars.imageSizePxYolo[0],
-        center[1] / vars.imageSizePxYolo[1],
-        width / vars.imageSizePxYolo[0],
-        height / vars.imageSizePxYolo[1]
-    ]  # divide by image dimensions to scale to 1
-
-    yoloString = str(classNumber) + " " + " ".join([f"{y:.8f}" for y in yolo])
-    # print(f"  yolo: \"{yoloString}\"")
-
-    return yoloString
-
-
+# generate data.yaml about the dataset
 def genDataYaml(listOfShape, datasetAbsolutePath):
     trainPath = os.path.join(datasetAbsolutePath, "train")
     validPath = os.path.join(datasetAbsolutePath, "valid")

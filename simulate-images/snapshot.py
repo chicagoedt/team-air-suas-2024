@@ -5,10 +5,10 @@ from shapely import affinity
 import vars
 
 # given the runway image, create a new image with the boundaries of the snapshot
-def takePicture(runway, snapshot):
+def takePicture(runway, snapshot, size):
     snapshotCorners = ravel((snapshot.exterior.coords[3] + snapshot.exterior.coords[2] +
                             snapshot.exterior.coords[1] + snapshot.exterior.coords[0]))
-    img = runway.transform(vars.imageSizePxYolo, QuadTransform(snapshotCorners))
+    img = runway.transform(size, QuadTransform(snapshotCorners))
     return img
 
 

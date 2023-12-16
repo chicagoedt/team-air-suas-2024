@@ -6,18 +6,6 @@ from shapely.geometry import box
 
 import vars
 
-# YOLO map index
-YOLO = {
-    "triangle": 0,
-    "pentagon": 1, 
-    "circle": 2,
-    "semicircle": 3,
-    "quartercircle": 4,
-    "rectangle": 5,
-    "star": 6,
-    "cross": 7
-}
-
 # constants
 colors = {
     "white": (255, 255, 255),  # White

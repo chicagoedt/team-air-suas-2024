@@ -17,6 +17,7 @@ simulate-images/target_images/*
 simulate-images/final_images/*
 *.png~
 *.xcf
+image-splitters/images/*
 
 # yolo
 runs/

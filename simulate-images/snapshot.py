@@ -1,6 +1,7 @@
 from PIL.ImageTransform import QuadTransform
 from numpy import ravel
 from shapely import affinity
+import random
 
 import vars
 
@@ -11,23 +12,13 @@ def takePicture(runway, snapshot, size):
     img = runway.transform(size, QuadTransform(snapshotCorners))
     return img
 
+# get a random snapshot based on original snapshot
+def getNewSnapshot(snapshot):
+    # choose a random location in the image
+    xOffset = random.randint(vars.airDropBoundary.bounds[0], vars.airDropBoundary.bounds[2] - vars.snapshotWidth)
+    yOffset = random.randint(vars.airDropBoundary.bounds[1], vars.airDropBoundary.bounds[3] - vars.snapshotHeight)
 
-# shift the snapshot polygon down or to the right
-def shiftSnapshot(snapshot):
-    # shift the snapshot down, overlapping by 2 * target height
-    newSnapshot = affinity.translate(
-        snapshot,
-        yoff=vars.snapshotHeight - (2 * vars.targetSize[1]) / vars.scaleFactor
-    )
-
-    # if moving down took us out of the boundary, move all the way up and right
-    if not newSnapshot.intersects(vars.airDropBoundary):
-        newSnapshot = affinity.translate(
-            snapshot,
-            xoff=vars.snapshotWidth -
-            (2 * vars.targetSize[0]) / vars.scaleFactor,
-            yoff=-snapshot.bounds[1] + vars.airDropBoundary.bounds[1]
-        )
-
-    # use new snapshot
+    # get new snapshot by shifting original snapshot by offsets x and y
+    newSnapshot = affinity.translate(snapshot, xoff=xOffset, yoff=yOffset)
     return newSnapshot
+

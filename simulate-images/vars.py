@@ -19,8 +19,8 @@ focalLength = 16  # mm
 droneHeight = 100  # ft
 imageSizePx = (4056, 3040)  # px
 targetSizeFt = (8.5 / 12, 11 / 12)  # ft (8.5x11" page)
-satelliteSizePx = (4950, 1650)  # px
-runwayPxPerFt = 4150 / 360  # px/ft
+satelliteSizePx = (4950, 1650) # px
+runwayPxPerFt = 4150 / 360 # px/ft
 
 # constant shapes
 airDropBoundary = box(400, 400, 4550, 1250)
@@ -33,7 +33,7 @@ imageDiagFt = 2 * droneHeight * tan(viewAngle / 2)  # ft
 # final values
 pxPerFt = imageDiagPx / imageDiagFt  # px/ft
 imageSizeFt = [l / pxPerFt for l in imageSizePx]  # ft
-scaleFactor = pxPerFt / runwayPxPerFt  # no unit
+scaleFactor = pxPerFt / runwayPxPerFt  # no unit # scaleFactor is the ratio of satellite img (px) -> 4K by 3K snapshot img (px)
 (snapshotWidth, snapshotHeight) = [int(dim * runwayPxPerFt) for dim in imageSizeFt]  # px
 targetSize = [int(f * pxPerFt) for f in targetSizeFt]  # px
 

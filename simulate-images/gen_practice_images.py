@@ -10,10 +10,12 @@ from target import *
 from snapshot import *
 
 def main():
+    runwayImg = "reference_images/runway.png"
+
     os.chdir(os.path.dirname(__file__))
 
     # open runway image
-    runway = Image.open("reference_images/runway.png")
+    runway = Image.open(runwayImg)
 
     # check if empty images have already been generated
     generateNew = True
@@ -26,7 +28,7 @@ def main():
         if os.path.exists(vars.noTargetDir):
             rmtree(vars.noTargetDir)
         os.makedirs(vars.noTargetDir)
-        generateEmptyImages(runway, vars.imageSizePx)
+        generateEmptyImages(runway, vars.imageSizePx, 10) # generate 20 random images
 
     # get input for numTargets per snapshot
     numTargets = int(input("\nHow many target images do you want to generate? \n>> "))
@@ -65,7 +67,7 @@ def targetInputParameters():
     return shape, shapeColor, letter, letterColor, rotateTarget # seed of a target
 
 # create the runway images that the targets will be placed on
-def generateEmptyImages(runway, size):
+def generateEmptyImages(runway, size, numImgs):
     print("\nGenerating empty images...")
     start_time = time.time()
 
@@ -78,16 +80,12 @@ def generateEmptyImages(runway, size):
     )
 
     # create images of runway
-    count = 0
-    while snapshot.intersects(vars.airDropBoundary):
+    for i in range(numImgs):
+        randomSnapshot = getNewSnapshot(snapshot)
         # save snapshot image
-        droneImage = takePicture(runway, snapshot, size)
+        droneImage = takePicture(runway, randomSnapshot, size)
         droneImage = droneImage.convert("RGB")
-        droneImage.save(os.path.join(vars.noTargetDir, f"img_{count:03}.jpg"))
-        count += 1
-
-        # move down and to the right as necessary
-        snapshot = shiftSnapshot(snapshot)
+        droneImage.save(os.path.join(vars.noTargetDir, f"img_{i:03}.jpg"))
 
     print(f"time: {time.time() - start_time:.2f} seconds")
 

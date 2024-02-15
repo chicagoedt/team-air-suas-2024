@@ -7,18 +7,31 @@ import os
 from shutil import rmtree
 from PIL import Image
 import time
-import vars
 import random
+from shapely.geometry import box
+from shapely import affinity
+
+import newSnapshot
+import newVars
 
 from target import createTarget, moveTarget
-from gen_practice_images import generateEmptyImages, createStoreFolder, writeYolo, placeTarget
+from gen_practice_images import createStoreFolder, writeYolo, placeTarget
+allShapes = ['triangle', 'pentagon', 'circle', 'semicircle', 'quartercircle', 'rectangle', 'star', 'cross']
 
 # set input for dataset that you want to generate
-listOfShape = ['triangle', 'rectangle']  # put shape in this list
-datasetName = "triAndRec"  # put a name to dataset
+listOfShape = allShapes  # put shape in this list
+datasetName = "allShapes"  # put a name to dataset
 destFolder = "snapshots"  # put path where you will store the dataset
-numImgPerShape = 30   # put number of images you want to generate
+numImgPerShape = 10   # put number of images you want to generate
 
+# input for GENERATING EMPTY IMAGES: image path, image name, satellitePxPerFt, boundary for snapshot
+satelliteImgPackList = [("reference_images/MillerGreenField-330px30ft.jpg", "MillerGreen", 330/30, (0, 0, 3840, 2160)),
+                        ("reference_images/runway-4150px360ft.png", "Runway", 4150/360, (400, 400, 4550, 1250)),
+                        ("reference_images/YellowField-MillerMeadow-81px10ft.png", "MillerYellow", 81/10, (0, 0, 1261, 662))]
+generatedImageSize = (4056, 3040)
+numImgsPerSatelliteImg = 10
+
+# generate the training datasets
 def genDataSet():
     scriptDir = os.path.dirname(__file__)
     os.chdir(scriptDir)
@@ -27,9 +40,9 @@ def genDataSet():
     trainPath = os.path.join(datasetPath, "train")
     validPath = os.path.join(datasetPath, "valid")
     testPath = os.path.join(datasetPath, "test")
-    numTrainImg = round(numImgPerShape * 7 / 10) # 70%
-    numValidImg = round(numImgPerShape * 2 / 10) # 20%
-    numTestImg = round(numImgPerShape * 1 / 10)  # 10%
+    numTrainImg = round(numImgPerShape * 8.5 / 10) # 85%
+    numValidImg = round(numImgPerShape * 1 / 10) # 10%
+    numTestImg = round(numImgPerShape * 0.5 / 10)  # 5%
 
     # create a folder datasetName inside destFolder
     if os.path.exists(datasetPath):
@@ -47,14 +60,15 @@ def genDataSet():
 
     # for each folder train, valid, test -> gen_train_images.py with percentage of 70, 20, 10
     start_time = time.time()
+
+    # generate new empty images in vars.noTargetDir                              
+    if os.path.exists(newVars.noTargetDir):
+        rmtree(newVars.noTargetDir)
+    os.makedirs(newVars.noTargetDir)               
+    generateEmptyImagesPool(satelliteImgPackList, generatedImageSize, numImgsPerSatelliteImg)
+  
     classNumber = 0
     for shape in listOfShape:
-        # generate new empty images in vars.noTargetDir                              
-        if os.path.exists(vars.noTargetDir):
-            rmtree(vars.noTargetDir)
-        os.makedirs(vars.noTargetDir)               
-        generateEmptyImages(Image.open("reference_images/runway.png"), vars.imageSizePxYolo)
-
         # gen images for train, valid, test
         genImages(trainPath, numTrainImg, shape, classNumber)
         genImages(validPath, numValidImg, shape, classNumber)
@@ -63,6 +77,23 @@ def genDataSet():
 
     print(f"time: {time.time() - start_time:.2f} seconds\n")
     print(f"The generated images is generated in directory {datasetPath}\n")
+
+# generate a pool of background images
+def generateEmptyImagesPool(satelliteImgPackList, size, numImgsPerSatelliteImg):
+    
+    start_time = time.time()
+    for satelliteImgPack in satelliteImgPackList:
+        # configuration
+
+        satelliteImg = Image.open(satelliteImgPack[0])
+        satelliteImgName = satelliteImgPack[1]
+        satellitePxPerFt = satelliteImgPack[2]
+        boundaryBox = satelliteImgPack[3]
+        size = (4056, 3040)
+        numImgs = numImgsPerSatelliteImg
+        newSnapshot.generateEmptyImages(satelliteImg, satelliteImgName, satellitePxPerFt, boundaryBox, size, numImgs)
+
+    print(f"Generate empty images: time: {time.time() - start_time:.2f} seconds\n")
 
 # generate <numImg> training images in folder <path>
 def genImages(path, numImg, shape, classNumber):
@@ -74,13 +105,13 @@ def genImages(path, numImg, shape, classNumber):
     labelsPath = os.path.join(path, "labels/")
 
     # list of snapshots for target generating
-    listOfSnapshots = os.listdir(vars.noTargetDir)
+    listOfSnapshots = os.listdir(newVars.noTargetDir)
     numSnapshots = len(listOfSnapshots)
 
     # for each target, choose a random snapshot, and place a target at random location
     for i in range(numImg):
         filename = listOfSnapshots[random.randint(0, numSnapshots - 1)] # choose random snapshot
-        with Image.open(os.path.join(vars.noTargetDir, filename)) as emptyImage:
+        with Image.open(os.path.join(newVars.noTargetDir, filename)) as emptyImage:
             targetImage = emptyImage.convert("RGBA")
             targetFilename = shape + f"_{i:03}"
 

@@ -10,6 +10,7 @@ import time
 import random
 from shapely.geometry import box
 from shapely import affinity
+from PIL import ImageFilter
 
 import newSnapshot
 import newVars
@@ -119,6 +120,11 @@ def genImages(path, numImg, shape, classNumber):
 
             # save image in imagesPath
             targetImage = targetImage.convert("RGB")
+            xMin, yMin, xMax, yMax = [int(b) for b in targetPolygon.bounds]
+            boxCrop = (xMin, yMin, xMax, yMax)
+            ic = targetImage.crop(boxCrop)
+            ic = ic.filter(ImageFilter.BoxBlur(3))
+            targetImage.paste(ic, boxCrop)
             targetImage.save(os.path.join(imagesPath, targetFilename + ".jpg"))
 
             # save yolo txt in labelsPath

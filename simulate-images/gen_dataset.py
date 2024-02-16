@@ -28,7 +28,7 @@ numImgPerShape = 10   # put number of images you want to generate
 satelliteImgPackList = [("reference_images/MillerGreenField-330px30ft.jpg", "MillerGreen", 330/30, (0, 0, 3840, 2160)),
                         ("reference_images/runway-4150px360ft.png", "Runway", 4150/360, (400, 400, 4550, 1250)),
                         ("reference_images/YellowField-MillerMeadow-81px10ft.png", "MillerYellow", 81/10, (0, 0, 1261, 662))]
-generatedImageSize = (4056, 3040)
+generatedImageSize = (640, 640)
 numImgsPerSatelliteImg = 10
 
 # generate the training datasets
@@ -89,9 +89,7 @@ def generateEmptyImagesPool(satelliteImgPackList, size, numImgsPerSatelliteImg):
         satelliteImgName = satelliteImgPack[1]
         satellitePxPerFt = satelliteImgPack[2]
         boundaryBox = satelliteImgPack[3]
-        size = (4056, 3040)
-        numImgs = numImgsPerSatelliteImg
-        newSnapshot.generateEmptyImages(satelliteImg, satelliteImgName, satellitePxPerFt, boundaryBox, size, numImgs)
+        newSnapshot.generateEmptyImages(satelliteImg, satelliteImgName, satellitePxPerFt, boundaryBox, size, numImgsPerSatelliteImg)
 
     print(f"Generate empty images: time: {time.time() - start_time:.2f} seconds\n")
 

@@ -82,7 +82,7 @@ def createTarget(seed):
     # create a new image, draw shape and letter
     target = Image.new(mode="RGBA", size=vars.targetSize, color="#0000")
     target = drawShape(target, targetSeed["shape"], targetSeed["shapeColor"])
-    target = drawLetter(target, targetSeed["letter"], targetSeed["letterColor"])
+    target = drawLetter(target, targetSeed["letter"], targetSeed["letterColor"], targetSeed["shape"])
 
     # create a polygon for the target
     polygon = box(0, 0, target.size[0], target.size[1])
@@ -108,7 +108,12 @@ def drawShape(img, shape, color):
     if (shape == "circle"):
         diameter = img.size[1] if (img.size[0] > img.size[1]) else img.size[0]
         diameter -= 4
-        draw.ellipse([0, 0, (diameter, diameter)], fill=colors[color], width=0)
+        # determine the place to draw so circle will be in the center of the img
+        centerImg = (img.size[0] / 2, img.size[1] / 2)
+        upperLeftCorner = (centerImg[0] - diameter / 2, centerImg[1] - diameter / 2)
+        bottomRightCorner = (centerImg[0] + diameter / 2, centerImg[1] + diameter / 2)
+
+        draw.ellipse([upperLeftCorner, bottomRightCorner], fill=colors[color], width=0)
     elif (shape in special_cases):
         with Image.open(vars.resourceDir + shape + ".bmp") as bitFile:
             scaleFactor = vars.targetSize[0] / bitFile.width
@@ -138,18 +143,26 @@ def drawShape(img, shape, color):
 
 
 # draw letter on target
-def drawLetter(img, letter, color):
+def drawLetter(img, letter, color, shape):
     draw = ImageDraw.Draw(img)
     font = ImageFont.truetype(
         vars.resourceDir + "arial.ttf", int(vars.targetSize[0] / 2))
-
-    draw.text(
-        [vars.targetSize[0] / 2, vars.targetSize[1] / 2],
-        letter,
-        fill=colors[color],
-        anchor="mm",
-        font=font
-    )
+    if shape == "star":
+        draw.text(
+            [vars.targetSize[0] / 2, vars.targetSize[1] / 2 + 8],
+            letter,
+            fill=colors[color],
+            anchor="mm",
+            font=font
+        )
+    else:
+        draw.text(
+            [vars.targetSize[0] / 2, vars.targetSize[1] / 2],
+            letter,
+            fill=colors[color],
+            anchor="mm",
+            font=font
+        )
 
     return img
 

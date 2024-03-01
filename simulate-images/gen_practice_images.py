@@ -123,6 +123,11 @@ def generateTargetImages(folder, num, seed):
 
     # for each target, choose a random snapshot, and place a target at random location
     for i in range(num):
+        # get random values of the target
+        vars.exportValuesDroneHeight()
+        print(i, "Drone height: ", vars.droneHeight)
+        
+        # get an empty snapshot and place target on it
         filename = listOfSnapshots[random.randint(0, numSnapshots - 1)] # choose random snapshot
         with Image.open(os.path.join(vars.noTargetDir, filename)) as emptyImage:
             targetImage = emptyImage.convert("RGBA")

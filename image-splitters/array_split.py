@@ -53,8 +53,7 @@ def split_array(big_JPEG_array):
             #Get pixels of sub image
             #print("sub-images: (" + str(start_x) + ", " + str(end_x) + ") (" + str(start_y) + ", " + str(end_y) + ")")
             sub_array = big_JPEG_array[start_y:end_y, start_x:end_x]
-            #Shows images
-            showImage(sub_array)
+            #showImage(sub_array) #Shows images
             #print("Sub-array dimensions: height - " + str(len(sub_array)) + " width - " + str(len(sub_array[0])) )
             sub_arrays.append((sub_array, (start_x, start_y)))
             start_x += max_sub_img_lw - max_target_size

@@ -5,6 +5,7 @@
 
 import cv2
 import os
+from shutil import rmtree
 
 imagesDir = "./images" # the path where broken images are stored, just leave it by default
 imgPath = "" # put the path to image that wants to be broken
@@ -38,4 +39,7 @@ def splitImages(img, a, b):
 
 if __name__ == "__main__":
     img = cv2.imread(imgPath)
+    if os.path.exists(imagesDir):
+        rmtree(imagesDir)
+    os.makedirs(imagesDir)  
     splitImages(img, 640, 640)

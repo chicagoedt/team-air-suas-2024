@@ -16,18 +16,51 @@ def getShape(value):
     return shapes[value]
 
 def is_similar_spot(coord1, coord2):
-    return 1 if (abs(coord1[0] - coord2[0]) <= max_target_size and abs(coord1[1] - coord2[1]) <= max_target_size) else 0
+    return True if (abs(coord1[0] - coord2[0]) <= max_target_size and abs(coord1[1] - coord2[1]) <= max_target_size) else False
+
+def calculateAverage(points):
+    totalx = 0
+    totaly = 0
+    shape = points[0][2] #Gets shape
+
+    for point in points:
+        totalx += point[0]
+        totaly += point[1]
+    
+    return (totalx / len(points), totaly / len(points), shape)
 
 def removeDuplicates(results):
     index = 1
+    similar_values = {}
+    keys = []
+    final_coordinates = []
+
     #Iterate through elements
-    while index < len(results):
-        duplicates = results[index - 1]
-        if (is_similar_spot(results[index - 1], results[index])):
-            results.remove(results[index-1])
+    for item in results:
+        #Check if dictionary is empty
+        if len(similar_values) == 0:
+            similar_values[item] = [item]
+            keys.append(item)
         else:
-            index += 1
-    return results
+            #Check which section item belongs in inside similar_values
+            is_found = False
+            #Iterate through keys
+            for key in keys:
+                #If corresponding key is found, put that in
+                is_found = is_similar_spot(item, key)
+                if is_found:
+                    similar_values[key].append(item)
+                    break
+            #If matching key is not found, make a new key for it
+            if not is_found:
+                similar_values[item] = [item]
+                keys.append(item)
+
+    #Get averages of elements in similar_values
+    for key in keys:
+        final_coordinates.append(calculateAverage(similar_values[key]))
+
+    return final_coordinates
 
 # def getShape(shape):
 #     if shape == 
@@ -63,8 +96,8 @@ def detectTarget(path):
                 coordinate = (x + x_offset, y + y_offset, shape)
                 coord_list.append(coordinate)
         
-        if (len(coord_list) > 1):
-            removeDuplicates(coord_list)
+    if (len(coord_list) > 1):
+        coord_list = removeDuplicates(coord_list)
 
     #Return coordinates of target (list of cordinate (which in turn are in tuples))
     return coord_list

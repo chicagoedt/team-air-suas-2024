@@ -15,7 +15,8 @@ def showImage(img):
 
 #Splits array
 def split_array(big_JPEG_array):
-    sub_arrays = [] #Stores image, and offset
+    images = [] #Stores image, and offset
+    offsets = []
     max_rows = len(big_JPEG_array)
     max_cols = len(big_JPEG_array[0])
 
@@ -55,7 +56,8 @@ def split_array(big_JPEG_array):
             sub_array = big_JPEG_array[start_y:end_y, start_x:end_x]
             #showImage(sub_array) #Shows images
             #print("Sub-array dimensions: height - " + str(len(sub_array)) + " width - " + str(len(sub_array[0])) )
-            sub_arrays.append((sub_array, (start_x, start_y)))
+            images.append(sub_array)#, (start_x, start_y)))
+            offsets.append((start_x, start_y))
             start_x += max_sub_img_lw - max_target_size
             if (should_x_break == 1):
                 should_x_break = 0
@@ -65,4 +67,4 @@ def split_array(big_JPEG_array):
         if (should_y_break == 1):
             should_y_break = 0
             break
-    return sub_arrays
+    return [images, offsets]

@@ -7,8 +7,8 @@ import pathlib
 pathlib.WindowsPath = pathlib.PosixPath
 
 sys.path.insert(0, "image-splitters")
-from array_split import split_array, max_target_size
-img_path = "./image-splitters/Targets/0_7.jpg" #Resolution: 4k by 3k
+from array_split import split_array, max_target_size, showImage
+img_path = "./image-splitters/images_to_examine/Frame-18-02-2023-04-59-12.jpg" #Resolution: 4k by 3k
 # #img_path = "dog-puppy-on-garden-royalty-free-image-1586966191.jpg"
 # img_path = "./image-splitters/images_to_examine/white_octogon_black_2_green_pentagon_yellow_O.jpg"
 
@@ -26,12 +26,12 @@ def is_similar_spot(coord1, coord2):
 def calculateAverage(points):
     totalx = 0
     totaly = 0
-    #shape = points[0][2] #Gets shape
+    shape = points[0][2] #Gets shape
 
     for point in points:
         totalx += point[0]
         totaly += point[1]
-    return (round(totalx / len(points)), round(totaly / len(points)), points[2])
+    return (round(totalx / len(points)), round(totaly / len(points)), shape)
 
 def removeDuplicates(results):
     index = 1
@@ -106,6 +106,34 @@ def detectTarget(path):
     #Return coordinates of target (list of cordinate (which in turn are in tuples))
     return coord_list
 
+#Creates new images with dimensions provided
+    #@param tuple - stores dimensions (minx, maxX, miny, maxy)
+def getImageWithTarget(dimensions : list):
+    img = cv2.imread(img_path)
+    images = []
+    for dimension in dimensions:
+        start_x = int(dimension[0])
+        end_x = int(dimension[1])
+        start_y = int(dimension[2])
+        end_y = int(dimension[3])
+
+        images.append(img[start_y:end_y, start_x:end_x])
+    
+    return images
+
 if __name__ == "__main__":
-    print("Results: ")
-    print(detectTarget(img_path))
+    #Stores coordinates in list
+    coord_list = detectTarget(img_path)
+
+    #Creates dimensions for image
+    image_dimensions : list = []
+    for coord in coord_list:
+        #Coord format (x, y, s) - (x = x, y = y, s = shape)
+        offset = max_target_size/2
+        #Format: (minx, maxX, miny, maxy)
+        image_dimensions.append((coord[0] - offset, coord[0] + offset, coord[1] - offset, coord[1] + offset))
+    
+    images = getImageWithTarget(image_dimensions)
+
+    for img in images:
+        showImage(img)

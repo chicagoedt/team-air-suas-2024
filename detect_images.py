@@ -2,15 +2,19 @@ import sys
 import cv2
 import torch
 
+#Used to import Mac
+import pathlib
+pathlib.WindowsPath = pathlib.PosixPath
+
 sys.path.insert(0, "image-splitters")
 from array_split import split_array, max_target_size
 img_path = "./image-splitters/Targets/0_7.jpg" #Resolution: 4k by 3k
 # #img_path = "dog-puppy-on-garden-royalty-free-image-1586966191.jpg"
 # img_path = "./image-splitters/images_to_examine/white_octogon_black_2_green_pentagon_yellow_O.jpg"
 
-# model = torch.hub.load('/Users/ethanky/Documents/GitHub/yolowv5/yolov5', 'custom', path='/Users/ethanky/Documents/GitHub/team-air-suas-2024/best.pt', source='local', force_reload=True)  # local model
+model = torch.hub.load('/Users/ethanky/Documents/GitHub/yolowv5/yolov5', 'custom', path='/Users/ethanky/Documents/GitHub/team-air-suas-2024/best.pt', source='local', force_reload=True)  # local model
 #model = torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt')  # local model
-model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+# model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
 #def getShape(value):
 #    shapes = {0: 'triangle', 1: 'pentagon', 2: 'circle', 3: 'semicircle', 4: 'quartercircle', 5: 'rectangle', 6: 'star', 7: 'cross'}
@@ -27,8 +31,7 @@ def calculateAverage(points):
     for point in points:
         totalx += point[0]
         totaly += point[1]
-    
-    return (totalx / len(points), totaly / len(points), points[2])
+    return (round(totalx / len(points)), round(totaly / len(points)), points[2])
 
 def removeDuplicates(results):
     index = 1
@@ -85,8 +88,8 @@ def detectTarget(path):
 
         #Gets results, and stores updated data in cooridnates
         for result in results_numpy:
-            print("Result:")
-            print(result)
+            # print("Result:")
+            # print(result)
             xmin = result[0]
             ymin = result[1]
             xmax = result[2]
@@ -94,7 +97,7 @@ def detectTarget(path):
             shape = result[6]
             x = (xmax - xmin)/2 + xmin
             y = (ymax - ymin)/2 + ymin
-            coordinate = (x + offset[0], y + offset[1], shape)
+            coordinate = (round(x + offset[0]), round(y + offset[1]), shape)
             coord_list.append(coordinate)
         
     if (len(coord_list) > 1):

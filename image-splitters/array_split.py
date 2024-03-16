@@ -7,9 +7,9 @@ max_sub_img_lw = 640
 max_target_size = 118 #Size of target
 
 #Shows images
-def showImage(img):
+def showImage(img, name: str):
     #Shows images
-    cv2.imshow("Image", img)
+    cv2.imshow(name, img) #shape x - y
     cv2.waitKey(0)
     cv2.destroyAllWindows() 
 

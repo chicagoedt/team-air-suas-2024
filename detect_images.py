@@ -7,7 +7,7 @@ import pathlib
 pathlib.WindowsPath = pathlib.PosixPath
 
 sys.path.insert(0, "image-splitters")
-from array_split import split_array, max_target_size, showImage
+from array_split import split_array, max_target_size, showImage, max_sub_img_lw
 img_path = "./image-splitters/images_to_examine/Frame-18-02-2023-04-59-12.jpg" #Resolution: 4k by 3k
 # #img_path = "dog-puppy-on-garden-royalty-free-image-1586966191.jpg"
 # img_path = "./image-splitters/images_to_examine/white_octogon_black_2_green_pentagon_yellow_O.jpg"
@@ -124,16 +124,19 @@ def getImageWithTarget(dimensions : list):
 if __name__ == "__main__":
     #Stores coordinates in list
     coord_list = detectTarget(img_path)
+    print(coord_list)
 
     #Creates dimensions for image
     image_dimensions : list = []
+    offset = max_sub_img_lw/2
+    #Coord format (x, y, s) - (x = x, y = y, s = shape)
     for coord in coord_list:
-        #Coord format (x, y, s) - (x = x, y = y, s = shape)
-        offset = max_target_size/2
         #Format: (minx, maxX, miny, maxy)
         image_dimensions.append((coord[0] - offset, coord[0] + offset, coord[1] - offset, coord[1] + offset))
     
     images = getImageWithTarget(image_dimensions)
 
-    for img in images:
-        showImage(img)
+    for i in range(0, len(images)):
+        img = images[i]
+        name = coord_list[i][2] + " " + str(coord_list[i][0]) + " - " + str(coord_list[i][1])
+        showImage(img, name)

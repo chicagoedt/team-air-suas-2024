@@ -4,11 +4,13 @@ import torch
 
 #Used to import Mac
 import pathlib
+from pathlib import Path
 pathlib.WindowsPath = pathlib.PosixPath
 
 sys.path.insert(0, "image-splitters")
 from array_split import split_array, max_target_size, showImage, max_sub_img_lw
-img_path = "./image-splitters/images_to_examine/Frame-18-02-2023-04-59-12.jpg" #Resolution: 4k by 3k
+dir_path = "./image-splitters/images_to_examine"
+#img_path = "./image-splitters/images_to_examine/Frame-18-02-2023-04-59-12.jpg" #Resolution: 4k by 3k
 # #img_path = "dog-puppy-on-garden-royalty-free-image-1586966191.jpg"
 # img_path = "./image-splitters/images_to_examine/white_octogon_black_2_green_pentagon_yellow_O.jpg"
 
@@ -108,7 +110,7 @@ def detectTarget(path):
 
 #Creates new images with dimensions provided
     #@param tuple - stores dimensions (minx, maxX, miny, maxy)
-def getImageWithTarget(dimensions : list):
+def getImageWithTarget(img_path, dimensions : list):
     img = cv2.imread(img_path)
     images = []
     for dimension in dimensions:
@@ -121,7 +123,14 @@ def getImageWithTarget(dimensions : list):
     
     return images
 
-if __name__ == "__main__":
+def getImagesGivenDirPath():
+    images = Path(dir_path).glob('*.jpg')
+    imagePaths : list = []
+    for image in images:
+        imagePaths.append(str(image))
+    return imagePaths
+
+def displaySubImages(img_path : str):
     #Stores coordinates in list
     coord_list = detectTarget(img_path)
     print(coord_list)
@@ -132,11 +141,32 @@ if __name__ == "__main__":
     #Coord format (x, y, s) - (x = x, y = y, s = shape)
     for coord in coord_list:
         #Format: (minx, maxX, miny, maxy)
-        image_dimensions.append((coord[0] - offset, coord[0] + offset, coord[1] - offset, coord[1] + offset))
+        minx = coord[0] - offset
+        maxx = coord[0] + offset
+        miny = coord[1] - offset
+        maxy = coord[1] + offset
+        if minx < 0:
+            minx = 0
+            maxx = max_sub_img_lw
+        if miny < 0:
+            miny = 0
+            maxy = max_sub_img_lw
+
+
+        image_dimensions.append((minx, maxx, miny, maxy))
     
-    images = getImageWithTarget(image_dimensions)
+    images = getImageWithTarget(img_path, image_dimensions)
 
     for i in range(0, len(images)):
         img = images[i]
         name = coord_list[i][2] + " " + str(coord_list[i][0]) + " - " + str(coord_list[i][1])
         showImage(img, name)
+
+if __name__ == "__main__":
+    # path = "image-splitters/images_to_examine/Frame-18-02-2023-05-00-10.jpg"
+    # displaySubImages(path)
+    image_paths = getImagesGivenDirPath()
+
+    for img_path in image_paths:
+        print(img_path)
+        displaySubImages(img_path)

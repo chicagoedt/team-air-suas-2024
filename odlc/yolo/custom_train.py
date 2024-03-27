@@ -1,13 +1,13 @@
 from ultralytics import YOLO
 
 
-modelPath = '/Users/mightymanh/Desktop/myCode/team-air-suas-2024/odlc/yolo/runs/detect/yolov8s_custom7/weights/best.pt'
+modelPath = 'yolov5s'
 # Load the model.
 model = YOLO(modelPath)
  
 # Training.
 results = model.train(
-   data='/Users/mightymanh/Desktop/myCode/team-air-suas-2024/simulate-images/snapshots/rectangle/data.yaml',
+   data='/Users/ethanky/Documents/GitHub/team-air-suas-2024/simulate-images/snapshots/allShapes/data.yaml',
    epochs=5,
    batch=8,
 )

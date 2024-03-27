@@ -1,4 +1,5 @@
 import sys
+import time
 import cv2
 import torch
 
@@ -14,7 +15,7 @@ dir_path = "./image-splitters/images_to_examine"
 # #img_path = "dog-puppy-on-garden-royalty-free-image-1586966191.jpg"
 # img_path = "./image-splitters/images_to_examine/white_octogon_black_2_green_pentagon_yellow_O.jpg"
 
-model = torch.hub.load('/Users/ethanky/Documents/GitHub/yolowv5/yolov5', 'custom', path='/Users/ethanky/Documents/GitHub/team-air-suas-2024/best.pt', source='local', force_reload=True)  # local model
+model = torch.hub.load('/Users/ethanky/Documents/GitHub/yolowv5/yolov5', 'custom', path='./best.pt', source='local', force_reload=True)  # local model
 #model = torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt')  # local model
 # model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
@@ -74,8 +75,6 @@ def removeDuplicates(results):
 def detectTarget(path):
     # read the jpeg -> numpy array
     img = cv2.imread(path)
-    #to_dir = "./image-splitters/images"
-    #imagePaths = splitImages(img, 0, toDirectory)
     coord_list = []
 
     # split numpy array -> smaller np arrays
@@ -84,14 +83,10 @@ def detectTarget(path):
         image = data[0][i]
         offset = data[1][i]
         results = model(image)
-        # print("Results for " + str(i) + ":")
-        # print(results)
         results_numpy = results.pandas().xyxy[0].to_numpy()  # Pandas DataFrame
 
         #Gets results, and stores updated data in cooridnates
         for result in results_numpy:
-            # print("Result:")
-            # print(result)
             xmin = result[0]
             ymin = result[1]
             xmax = result[2]
@@ -130,7 +125,7 @@ def getImagesGivenDirPath():
         imagePaths.append(str(image))
     return imagePaths
 
-def displaySubImages(img_path : str):
+def displaySubImages(img_path : str, showImages: bool):
     #Stores coordinates in list
     coord_list = detectTarget(img_path)
     print(coord_list)
@@ -157,16 +152,23 @@ def displaySubImages(img_path : str):
     
     images = getImageWithTarget(img_path, image_dimensions)
 
-    for i in range(0, len(images)):
-        img = images[i]
-        name = coord_list[i][2] + " " + str(coord_list[i][0]) + " - " + str(coord_list[i][1])
-        showImage(img, name)
+    if showImages:
+        #responsible for displaying images
+        for i in range(0, len(images)):
+            img = images[i]
+            name = coord_list[i][2] + " " + str(coord_list[i][0]) + " - " + str(coord_list[i][1])
+            showImage(img, name)
 
 if __name__ == "__main__":
-    # path = "image-splitters/images_to_examine/Frame-18-02-2023-05-00-10.jpg"
-    # displaySubImages(path)
+
+    #Gets each image path for every image in directory
     image_paths = getImagesGivenDirPath()
 
+
     for img_path in image_paths:
+        startTime = time.time()
         print(img_path)
-        displaySubImages(img_path)
+        #Displays sub images
+        displaySubImages(img_path, False)
+        stopTime = time.time()
+        print("Time taken: " + str((int)(stopTime - startTime)))

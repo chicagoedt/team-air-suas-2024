@@ -17,13 +17,13 @@ import newVars
 
 from target import createTarget, moveTarget
 from gen_practice_images import createStoreFolder, writeYolo, placeTarget
-allShapes = ['triangle', 'pentagon', 'circle', 'semicircle', 'quartercircle', 'rectangle', 'star', 'cross']
+allShapes = ['triangle'] #, 'pentagon', 'circle', 'semicircle', 'quartercircle', 'rectangle', 'star', 'cross']
 
 # set input for dataset that you want to generate
 listOfShape = allShapes  # put shape in this list
 datasetName = "allShapes"  # put a name to dataset
 destFolder = "snapshots"  # put path where you will store the dataset
-numImgPerShape = 10   # put number of images you want to generate
+numImgPerShape = 100   # put number of images you want to generate
 
 # input for GENERATING EMPTY IMAGES: image path, image name, satellitePxPerFt, boundary for snapshot
 satelliteImgPackList = [("reference_images/MillerGreenField-330px30ft.jpg", "MillerGreen", 330/30, (0, 0, 3840, 2160)),

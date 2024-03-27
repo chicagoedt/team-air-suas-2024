@@ -125,12 +125,8 @@ def getImagesGivenDirPath():
         imagePaths.append(str(image))
     return imagePaths
 
-def displaySubImages(img_path : str, showImages: bool):
-    #Stores coordinates in list
-    coord_list = detectTarget(img_path)
-    print(coord_list)
-
-    #Creates dimensions for image
+def displaySubImages(img_path : str, coord_list : list):
+    #Creates dimensions for images
     image_dimensions : list = []
     offset = max_sub_img_lw/2
     #Coord format (x, y, s) - (x = x, y = y, s = shape)
@@ -147,19 +143,52 @@ def displaySubImages(img_path : str, showImages: bool):
             miny = 0
             maxy = max_sub_img_lw
 
-
         image_dimensions.append((minx, maxx, miny, maxy))
     
     images = getImageWithTarget(img_path, image_dimensions)
 
-    if showImages:
-        #responsible for displaying images
-        for i in range(0, len(images)):
-            img = images[i]
-            name = coord_list[i][2] + " " + str(coord_list[i][0]) + " - " + str(coord_list[i][1])
-            showImage(img, name)
+    #responsible for displaying images
+    for i in range(0, len(images)):
+        img = images[i]
+        name = coord_list[i][2] + " " + str(coord_list[i][0]) + " - " + str(coord_list[i][1])
+        showImage(img, name)
+
+
+def getTextData(textPath: str):
+    file = open(textPath, "r")
+    text : str = file.read()
+    values : list = text.split(" ")
+
+    for i in range(0, len(values)):
+        values[i] = float(values[i])
+    return values
+
+
+#Gets file path and text file
+#Output: (coordinates: [(x,y),(x1, y1)], then x, y, drone height)
+def someFunc(filePath: str, textPath: str):
+    data = ()
+    #Stores coordinates in list
+    coord_list = detectTarget(filePath)
+    new_coord_list = []
+    for coord in coord_list:
+        new_coord_list.append( (coord[0], coord[1]) )
+    data.append(new_coord_list)
+
+    #Displays sub images
+    # displaySubImages(img_path, coord_list)
+
+    x, y, height = getTextData(textPath)
+    data.append(x)
+    data.append(y)
+    data.append(height)
+
+    return data
+
+
 
 if __name__ == "__main__":
+
 
     #Gets each image path for every image in directory
     image_paths = getImagesGivenDirPath()
@@ -168,7 +197,11 @@ if __name__ == "__main__":
     for img_path in image_paths:
         startTime = time.time()
         print(img_path)
-        #Displays sub images
-        displaySubImages(img_path, False)
+
+        textPath = str(img_path).replace(".jpg", ".txt")
+        data = someFunc(img_path, textPath)
+
+        print(data)
+        
         stopTime = time.time()
         print("Time taken: " + str((int)(stopTime - startTime)))

@@ -7,9 +7,9 @@ import pathlib
 from pathlib import Path
 pathlib.WindowsPath = pathlib.PosixPath
 
-sys.path.insert(0, "image-splitters")
+sys.path.insert(0, "/Users/ethanky/Documents/GitHub/team-air-suas-2024/image-splitters")
 from array_split import split_array, max_target_size, showImage, max_sub_img_lw
-dir_path = "./image-splitters/images_to_examine"
+dir_path = "/Users/ethanky/Documents/GitHub/team-air-suas-2024/image-splitters/images_to_examine"
 #img_path = "./image-splitters/images_to_examine/Frame-18-02-2023-04-59-12.jpg" #Resolution: 4k by 3k
 # #img_path = "dog-puppy-on-garden-royalty-free-image-1586966191.jpg"
 # img_path = "./image-splitters/images_to_examine/white_octogon_black_2_green_pentagon_yellow_O.jpg"

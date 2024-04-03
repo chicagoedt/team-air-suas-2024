@@ -70,9 +70,6 @@ def removeDuplicates(results):
 
     return final_coordinates
 
-# def getShape(shape):
-#     if shape == 
-
 def detectTarget(path):
     # read the jpeg -> numpy array
     img = cv2.imread(path)
@@ -166,15 +163,12 @@ def getTextData(textPath: str):
 
 
 #Gets file path and text file
-#Output: (coordinates: [(x,y),(x1, y1)], then x, y, drone height)
+#Output: (coordinates: [(x,y, s),(x1, y1, s1)], then x, y, drone height)
 def someFunc(filePath: str, textPath: str):
     data = []
     #Stores coordinates in list
     coord_list = detectTarget(filePath)
-    new_coord_list = []
-    for coord in coord_list:
-        new_coord_list.append( (coord[0], coord[1]) )
-    data.append(new_coord_list)
+    data.append(coord_list)
 
     #Displays sub images
     # displaySubImages(img_path, coord_list)

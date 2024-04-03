@@ -11,11 +11,12 @@ pathlib.WindowsPath = pathlib.PosixPath
 sys.path.insert(0, "./image-splitters")
 from array_split import split_array, max_target_size, showImage, max_sub_img_lw
 dir_path = "./image-splitters/images_to_examine"
+yolo_path = "/Users/ethanky/Documents/eky2_github/yolowv5/yolov5"
 #img_path = "./image-splitters/images_to_examine/Frame-18-02-2023-04-59-12.jpg" #Resolution: 4k by 3k
 # #img_path = "dog-puppy-on-garden-royalty-free-image-1586966191.jpg"
 # img_path = "./image-splitters/images_to_examine/white_octogon_black_2_green_pentagon_yellow_O.jpg"
 
-model = torch.hub.load('/Users/ethanky/Documents/GitHub/yolowv5/yolov5', 'custom', path='./best.pt', source='local', force_reload=True)  # local model
+model = torch.hub.load(yolo_path, 'custom', path='./best.pt', source='local', force_reload=True)  # local model
 #model = torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt')  # local model
 # model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
@@ -167,7 +168,7 @@ def getTextData(textPath: str):
 #Gets file path and text file
 #Output: (coordinates: [(x,y),(x1, y1)], then x, y, drone height)
 def someFunc(filePath: str, textPath: str):
-    data = ()
+    data = []
     #Stores coordinates in list
     coord_list = detectTarget(filePath)
     new_coord_list = []
@@ -183,7 +184,7 @@ def someFunc(filePath: str, textPath: str):
     data.append(y)
     data.append(height)
 
-    return data
+    return tuple(data)
 
 
 

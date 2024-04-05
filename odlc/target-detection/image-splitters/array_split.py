@@ -6,14 +6,22 @@ import cv2
 max_sub_img_lw = 640
 max_target_size = 118 #Size of target
 
-#Shows images
+'''
+    Displays image
+    @param img - image to show
+    @param name - name to show for image
+'''
 def showImage(img, name: str):
     #Shows images
     cv2.imshow(name, img) #shape x - y
     cv2.waitKey(0)
     cv2.destroyAllWindows() 
 
-#Splits array
+'''
+    Splits array
+    @param big_JPEG_aray - array to split
+    @returns images and offsets in this format: [[img, img1], [offset, offset1]]
+'''
 def split_array(big_JPEG_array):
     images = [] #Stores image, and offset
     offsets = []

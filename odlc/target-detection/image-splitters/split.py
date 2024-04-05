@@ -12,7 +12,12 @@ imgPath = "" # put the path to image that wants to be broken
 
 maxTargetSize = 118
 
-# dissect big image into small images size a * b, starting at coordinate (0, 0)
+'''
+    Dissect big image into small images size a * b, starting at coordinate (0, 0)
+    @param img - image to split
+    @param a - width of smaller images
+    @param b - height of smaller images
+'''
 def splitImages(img, a, b):
     # Sets x and y (start and end) positions
     startx = 0
@@ -36,6 +41,8 @@ def splitImages(img, a, b):
 
         starty += (b - maxTargetSize)
         startx = 0
+
+
 
 if __name__ == "__main__":
     img = cv2.imread(imgPath)

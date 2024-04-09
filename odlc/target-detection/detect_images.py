@@ -43,6 +43,12 @@ Returns the average point given a bunch of points
 @param points - list of points to average from
 @returns the average point from the list of points provided
 """
+"""
+Returns the average point given a bunch of points
+
+@param points - list of points to average from
+@returns the average point from the list of points provided
+"""
 def calculateAverage(points):
     totalx = 0
     totaly = 0

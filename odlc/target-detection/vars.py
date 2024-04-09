@@ -42,8 +42,17 @@ targetSize = [int(f * pxPerFt) for f in targetSizeFt]  # px
 # function to change global values that depend on drone height
 def exportValuesDroneHeight():
     global droneHeight, imageDiagFt, pxPerFt, imageSizeFt, scaleFactor, snapshotWidth, snapshotHeight, targetSize
-    droneHeight = 75 #random.randint(25, 110)
+    droneHeight = random.randint(25, 110)
     imageDiagFt = 2 * droneHeight * tan(viewAngle / 2)
+    pxPerFt = imageDiagPx / imageDiagFt  # px/ft
+    imageSizeFt = [l / pxPerFt for l in imageSizePx]  # ft
+    scaleFactor = pxPerFt / runwayPxPerFt  # no unit # scaleFactor is the ratio of satellite img (px) -> 4K by 3K snapshot img (px)
+    (snapshotWidth, snapshotHeight) = [int(dim * runwayPxPerFt) for dim in imageSizeFt]  # px
+    targetSize = [int(f * pxPerFt) for f in targetSizeFt]  # px
+
+def exportValuesDroneHeight(dH):
+    global imageDiagFt, pxPerFt, imageSizeFt, scaleFactor, snapshotWidth, snapshotHeight, targetSize
+    imageDiagFt = 2 * dH * tan(viewAngle / 2)
     pxPerFt = imageDiagPx / imageDiagFt  # px/ft
     imageSizeFt = [l / pxPerFt for l in imageSizePx]  # ft
     scaleFactor = pxPerFt / runwayPxPerFt  # no unit # scaleFactor is the ratio of satellite img (px) -> 4K by 3K snapshot img (px)

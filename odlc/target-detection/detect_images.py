@@ -12,8 +12,12 @@ pathlib.WindowsPath = pathlib.PosixPath
 sys.path.insert(0, "./image-splitters")
 from array_split import split_array, max_target_size, showImage, max_sub_img_lw
 
+#Import vars
+import vars
+from calc_distance import get_target_location
+
 #Where the images we need to look at are
-dir_path = "./image-splitters/images_to_examine"
+dir_path = "/Users/ethanky/Documents/eky2_github/team-air-suas-2024/simulate-images/snapshots/target/images"
 
 #Where the original YOLOv5 model is at (Currently local)
 yolo_path = "/Users/ethanky/Documents/eky2_github/yolowv5/yolov5"
@@ -234,7 +238,7 @@ def displaySubImages(img_path : str, coord_list : list):
 Gets the data of text
 
 @param - textPath of text file
-@returns tuple in this format: (x, y, height)
+@returns tuple in this format: (lat, lon, height)
 """
 def getTextData(textPath: str):
     #Opens file
@@ -254,7 +258,7 @@ Gets file path and text file
 
 @param - filepath of image file
 @param - textPath of text file
-@returns data in this format: ([(x, y, s), (x1, y1, s1)], x, y, drone height)
+@returns data in this format: ([(x, y, s), (x1, y1, s1)], lat, lon, droneHeight)
 """
 def someFunc(filePath: str, textPath: str):
     data = []
@@ -266,13 +270,62 @@ def someFunc(filePath: str, textPath: str):
     # displaySubImages(img_path, coord_list)
 
     #Gets variables x, y, h and puts it in data
-    x, y, height = getTextData(textPath)
-    data.append(x)
-    data.append(y)
+    lat, lon, height = getTextData(textPath)
+
+    data.append(lat)
+    data.append(lon)
     data.append(height)
 
     #Returns the data in tuple format
     return tuple(data)
+
+"""
+    Converts coordinates in target to actual (lat, lon) coordinates
+
+    @param data - stores data in this format: ([(x, y, s), (x1, y1, s1)], lat, lon, droneHeight)
+    @retuns data in this new format: [(Lat, lon, s), (lat1, lon1, s1)]
+"""
+def getLatLonCoordinates(data : tuple):
+    updated_data = []
+
+    local_coords = data[0]
+    local_lat = data[1]
+    local_lon = data[2]
+    local_height = data[3]
+    vars.exportValuesDroneHeight(local_height)
+
+    imgSizePx = vars.imageSizePx
+    imgSizePxX = imgSizePx[0]
+    imgSizePxY = imgSizePx[1]
+
+    imgSizeFt = vars.imageSizeFt
+    imgSizeFtX = imgSizeFt[0]
+    imgSizeFtY = imgSizeFt[1]
+
+    for coord in local_coords:
+        x = coord[0]
+        y = coord[1]
+        shape = coord[2]
+        new_coord = get_target_location(x, y, imgSizePxX, imgSizePxY, local_lat, local_lon, imgSizeFtX, imgSizeFtY)
+
+        new_info = (new_coord[0], new_coord[1], shape)
+        updated_data.append(new_info)
+    
+    return updated_data
+
+"""
+
+@assume - origianl distance is in feet
+@feet should be 10.17
+"""
+def distanceBetweenTargets(point1, point2):
+    distancePx = (((point1[0] - point2[0]) ** 2) + ((point1[1] - point2[1]) ** 2)) ** 0.5
+
+    vars.exportValuesDroneHeight(75)
+
+    distanceFt = distancePx / vars.pxPerFt
+    print("Feet: " + str(distanceFt))
+    print("Pixels: " + str(distancePx))
 
 if __name__ == "__main__":
     #Gets each image path for every image in directory
@@ -286,8 +339,14 @@ if __name__ == "__main__":
         #Gets data needed for us ([Coordinates], x, y, droneHeight)
         textPath = str(img_path).replace(".jpg", ".txt")
         data = someFunc(img_path, textPath)
-
         print(data)
+
+        new_data = getLatLonCoordinates(data)
+        print(new_data)
+
+        if len(new_data) > 0:
+            for point in data[0]:
+                distanceBetweenTargets(point, (vars.imageSizePx[0] / 2, vars.imageSizePx[1] / 2))
 
         #Also keeps track of time
         stopTime = time.time()

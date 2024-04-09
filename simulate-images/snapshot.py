@@ -15,8 +15,8 @@ def takePicture(runway, snapshot, size):
 # get a random snapshot based on original snapshot
 def getNewSnapshot(snapshot):
     # choose a random location in the image
-    xOffset = random.randint(vars.airDropBoundary.bounds[0], vars.airDropBoundary.bounds[2] - vars.snapshotWidth)
-    yOffset = random.randint(vars.airDropBoundary.bounds[1], vars.airDropBoundary.bounds[3] - vars.snapshotHeight)
+    xOffset = random.randint(int(vars.airDropBoundary.bounds[0]), int(vars.airDropBoundary.bounds[2] - vars.snapshotWidth))
+    yOffset = random.randint(int(vars.airDropBoundary.bounds[1]), int(vars.airDropBoundary.bounds[3] - vars.snapshotHeight))
 
     # get new snapshot by shifting original snapshot by offsets x and y
     newSnapshot = affinity.translate(snapshot, xoff=xOffset, yoff=yOffset)

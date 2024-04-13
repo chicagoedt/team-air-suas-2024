@@ -2,6 +2,8 @@ import sys
 import time
 import cv2
 import torch
+import imutils 
+import math
 
 #Used to import Filepaths for Mac
 import pathlib
@@ -114,15 +116,33 @@ def removeDuplicates(results):
     #Return final coordinates
     return final_coordinates
 
+def rotate(origin, point, angle):
+    """
+    Rotate a point counterclockwise by a given angle around a given origin.
+
+    The angle should be given in radians.
+    """
+    ox, oy = origin
+    px, py = point
+
+    qx = ox + math.cos(angle) * (px - ox) - math.sin(angle) * (py - oy)
+    qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
+    return (qx, qy)
+
 """
 Detects targets from a specific image and returns information about each target
 
 @param path - path of image to look at
 @returns a list of cooridnates in this format [(x, y, shape), (x1, y1, shape1)]
 """
-def detectTarget(path):
+def detectTarget(path, angle: int):
     # read the jpeg -> numpy array
     img = cv2.imread(path)
+
+    img_dimensions = (len(img[0]), len(img))
+
+    center_point = (img_dimensions[0]/2.0, img_dimensions[1]/2.0)
+
     #Stored coordinates (with shape)
     coord_list = []
 
@@ -156,8 +176,14 @@ def detectTarget(path):
             y = (ymax - ymin)/2 + ymin
             #Final coordinate
             coordinate = (round(x + offset[0]), round(y + offset[1]), shape)
-            #Push coordinate to list
-            coord_list.append(coordinate)
+
+            if angle != 0:
+                new_coord = rotate(center_point, (coordinate[0], coordinate[1]), (angle * math.pi / 180))
+                final_coord = (new_coord[0], new_coord[1], coordinate[2])
+                coord_list.append(final_coord)
+            else:
+                #Push coordinate to list
+                coord_list.append(coordinate)
     
     #Remove duplicates made from list
     if (len(coord_list) > 1):
@@ -244,7 +270,7 @@ def displaySubImages(img_path : str, coord_list : list):
 Gets the data of text
 
 @param - textPath of text file
-@returns tuple in this format: (lat, lon, height)
+@returns tuple in this format: (lat, lon, height, angle/yaw value)
 """
 def getTextData(textPath: str):
     #Opens file
@@ -258,25 +284,26 @@ def getTextData(textPath: str):
         values[i] = float(values[i])
     return values
 
-
 """
 Gets file path and text file
 
 @param - filepath of image file
 @param - textPath of text file
+@param - yawPath of yaw file
 @returns data in this format: ([(x, y, s), (x1, y1, s1)], lat, lon, droneHeight)
 """
-def someFunc(filePath: str, textPath: str):
+def someFunc(filePath: str, textPath: str, yawPath: str):
     data = []
+
+    #Gets variables x, y, h and puts it in data
+    lat, lon, height, yawValue = getTextData(textPath)
+
     #Stores coordinates in list
-    coord_list = detectTarget(filePath)
+    coord_list = detectTarget(filePath, yawValue)
     data.append(coord_list)
 
     #Displays sub images
     # displaySubImages(img_path, coord_list)
-
-    #Gets variables x, y, h and puts it in data
-    lat, lon, height = getTextData(textPath)
 
     data.append(lat)
     data.append(lon)
@@ -344,7 +371,8 @@ if __name__ == "__main__":
 
         #Gets data needed for us ([Coordinates], x, y, droneHeight)
         textPath = str(img_path).replace(".jpg", ".txt")
-        data = someFunc(img_path, textPath)
+        yawPath = str(img_path).replace(".jpg", ".yaw")
+        data = someFunc(img_path, textPath, yawPath)
         print(data)
 
         new_data = getLatLonCoordinates(data)

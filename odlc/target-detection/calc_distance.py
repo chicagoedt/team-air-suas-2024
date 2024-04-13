@@ -11,16 +11,16 @@ def get_target_location(target_x, target_y, image_width, image_height, latitude,
             latitude, longitude of the target (degree, degree)
     """
     # Convert feet to degrees
-    latitude_per_foot = 0.00000274
-    longitude_per_foot = 0.00000429
+    latitude_per_foot = 1.0/364000
+    longitude_per_foot = 1.0/288200
 
     # Calculate the number of degrees per pixel
     latitude_per_pixel = latitude_per_foot * height_feet / image_height
     longitude_per_pixel = longitude_per_foot * width_feet / image_width
 
     # Calculate the target's latitude and longitude
-    target_latitude = latitude + (target_y - image_height / 2) * latitude_per_pixel
-    target_longitude = longitude + (target_x - image_width / 2) * longitude_per_pixel
+    target_latitude = latitude - (target_y - (image_height / 2)) * latitude_per_pixel
+    target_longitude = longitude + (target_x - (image_width / 2)) * longitude_per_pixel
 
     return (target_latitude, target_longitude)
 

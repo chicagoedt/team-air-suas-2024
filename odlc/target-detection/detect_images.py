@@ -2,7 +2,6 @@ import sys
 import time
 import cv2
 import torch
-import imutils 
 import math
 
 #Used to import Filepaths for Mac
@@ -19,10 +18,10 @@ import vars
 from calc_distance import get_target_location
 
 #Where the images we need to look at are
-dir_path = "/Users/ethanky/Documents/eky2_github/team-air-suas-2024/simulate-images/snapshots/target/images"
+dir_path = "/Users/mightymanh/Desktop/myCode/team-air-suas-2024/odlc/target-detection/image-splitters/images_to_examine"
 
 #Where the original YOLOv5 model is at (Currently local)
-yolo_path = "/Users/ethanky/Documents/eky2_github/yolowv5/yolov5"
+yolo_path = "/Users/mightymanh/yolov5"
 
 #Current YOLO model (made from local yolo model)
 model = torch.hub.load(yolo_path, 'custom', path='./best.pt', source='local', force_reload=True)
@@ -292,7 +291,7 @@ Gets file path and text file
 @param - yawPath of yaw file
 @returns data in this format: ([(x, y, s), (x1, y1, s1)], lat, lon, droneHeight)
 """
-def someFunc(filePath: str, textPath: str, yawPath: str):
+def someFunc(filePath: str, textPath: str):
     data = []
 
     #Gets variables x, y, h and puts it in data
@@ -371,8 +370,7 @@ if __name__ == "__main__":
 
         #Gets data needed for us ([Coordinates], x, y, droneHeight)
         textPath = str(img_path).replace(".jpg", ".txt")
-        yawPath = str(img_path).replace(".jpg", ".yaw")
-        data = someFunc(img_path, textPath, yawPath)
+        data = someFunc(img_path, textPath)
         print(data)
 
         new_data = getLatLonCoordinates(data)

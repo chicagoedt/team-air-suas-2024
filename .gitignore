@@ -22,3 +22,8 @@ image-splitters/images/*
 # yolo
 runs/
 odlc/yolo/
+
+# mavsdk_server
+mav.parm
+mav.tlog
+mav.tlog.raw

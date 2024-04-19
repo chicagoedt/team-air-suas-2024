@@ -1,3 +1,6 @@
+"""
+    Testing winch: to turn on winch, flip switch to HOLD mode
+"""
 from mavsdk import System, telemetry
 import asyncio
 import Jetson.GPIO as GPIO
@@ -26,16 +29,16 @@ async def main():
             break
     
     # check mode
-    print('Waiting for flight mode to change to stabilize mode then do airdrop')
+    print('Waiting for flight mode to change to HOLD mode then do airdrop')
     
     # get the previous flight mode
     previous_mode = 'unknown'
     async for flight_mode in drone.telemetry.flight_mode():
         previous_mode = str(flight_mode)
-        if previous_mode != 'STABILIZED':
+        if previous_mode != 'HOLD':
             break
         else:
-            print('Make sure you set the flight mode different than stabilize')
+            print('Make sure you set the flight mode different than HOLD')
 
     # switch: if it is in 'STABILIZE' mode, activate the arduino pin. else, deactivate the arduino pin HAHAHAHA
     async for flight_mode in drone.telemetry.flight_mode():
@@ -43,8 +46,8 @@ async def main():
         print('Previous mode: {}, Current mode: {}'.format(previous_mode, current_mode))
         if current_mode == previous_mode:
             print('Nothing change')
-        elif str(flight_mode) == 'STABILIZED':
-            previous_mode = 'STABILIZED'
+        elif str(flight_mode) == 'HOLD':
+            previous_mode = 'HOLD'
             # turn on arduino code
             print('Turn on Arduino')
             GPIO.output(arduino_pin, GPIO.HIGH)

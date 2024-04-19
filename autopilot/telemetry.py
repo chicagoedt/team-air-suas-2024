@@ -1,3 +1,7 @@
+"""
+    Testing mavlink, debug
+"""
+
 import asyncio
 from mavsdk import System
 
@@ -6,7 +10,7 @@ vim_address = "serial:///dev/ttyTHS1:57600"
 async def run():
     # Init the drone
     drone = System()
-    await drone.connect(system_address=vim_address)
+    await drone.connect()
 
     # checking if drone is connected
     async for state in drone.core.connection_state():
@@ -16,9 +20,10 @@ async def run():
 
     # Start the tasks
     asyncio.ensure_future(print_battery(drone))
-    asyncio.ensure_future(print_gps_info(drone))
+    # asyncio.ensure_future(print_gps_info(drone))
     asyncio.ensure_future(print_in_air(drone))
-    asyncio.ensure_future(print_position(drone))
+    # asyncio.ensure_future(print_position(drone))
+    asyncio.ensure_future(print_yaw(drone))
 
     while True:
         await asyncio.sleep(1)
@@ -43,6 +48,9 @@ async def print_position(drone):
     async for position in drone.telemetry.position():
         print(position)
 
+async def print_yaw(drone):
+    async for deg in drone.telemetry.heading():
+        print(deg)
 
 if __name__ == "__main__":
     # Start the main function

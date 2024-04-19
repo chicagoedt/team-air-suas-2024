@@ -2,11 +2,20 @@ import asyncio
 from mavsdk import System
 
 vim_address = "serial:///dev/ttyTHS1:57600"
+droneHeight = 30
+offset = 1
+CONTROL = True
+
+def waitTillInput():
+    if CONTROL:
+        input("Enter to continue next action ")
+
 
 async def run():
 
+    # initialize drone and check if it is healthy
     drone = System()
-    await drone.connect(system_address= vim_address)
+    await drone.connect()
 
     status_text_task = asyncio.ensure_future(print_status_text(drone))
 
@@ -22,16 +31,37 @@ async def run():
             print("-- Global position estimate OK")
             break
 
+    # set the takeoff altitude before arm
+    takeoff_alt = await drone.action.get_takeoff_altitude()
+    print("Take off original altitude:", takeoff_alt)
+    await drone.action.set_takeoff_altitude(droneHeight)
+    async for alt in drone.telemetry.altitude():
+        original_alt = alt.altitude_relative_m
+        break
+    print("Original altitude:", original_alt)
+    waitTillInput()
+
+    # flying
     print("-- Arming")
     await drone.action.arm()
+    waitTillInput()
 
     print("-- Taking off")
     await drone.action.takeoff()
-
-    await asyncio.sleep(10)
+    async for alt in drone.telemetry.altitude(): # take off to 30 m before doing next command
+        currentAlt = alt.altitude_relative_m
+        if currentAlt >= (droneHeight - offset):
+            break
+    waitTillInput()
 
     print("-- Landing")
     await drone.action.land()
+    async for in_air in drone.telemetry.in_air():
+        if not in_air:
+            break
+    
+    print("-- Disarm")
+    await drone.action.disarm()
 
     status_text_task.cancel()
 

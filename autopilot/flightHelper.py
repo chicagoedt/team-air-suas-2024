@@ -2,8 +2,7 @@ from mavsdk import System
 import math
 import asyncio
 
-latitude_per_foot = 1.0/364000
-longitude_per_foot = 1.0/288200
+import vars
 
 # function to enable slow control from user
 def waitTillInput(CONTROL):
@@ -58,15 +57,15 @@ async def goToWaypoint(drone, waypoint, heightAbs, yaw=0):
     print("-- Traveling to waypoint:", waypoint)
     await drone.action.goto_location(waypoint[0], waypoint[1], heightAbs, yaw)
     async for position in drone.telemetry.position():
-        distanceLat = (position.latitude_deg - waypoint[0]) / latitude_per_foot
-        distanceLong = (position.longitude_deg - waypoint[1]) / longitude_per_foot
+        distanceLat = (position.latitude_deg - waypoint[0]) / vars.latitude_per_foot
+        distanceLong = (position.longitude_deg - waypoint[1]) / vars.longitude_per_foot
         distance = math.sqrt(distanceLat ** 2 + distanceLong ** 2)
         print(distance)
-        if distance < 7:
+        if distance < vars.offsetWp:
             break
 
 # land and disarm
-async def land(drone):
+async def landAndDisarm(drone):
     print("-- Landing")
     await drone.action.land()
     async for in_air in drone.telemetry.in_air():

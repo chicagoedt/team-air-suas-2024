@@ -8,7 +8,7 @@ import vars
 async def run():
 
     # initialize drone and check if it is healthy
-    drone = flightHelper.initializeDrone()
+    drone = await flightHelper.initializeDrone()
     originalHeightAbs = await flightHelper.getOriginalHeightAbs(drone)
     flightHelper.waitTillInput(vars.CONTROL)
 
